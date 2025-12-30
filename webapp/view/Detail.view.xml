@@ -1,0 +1,87 @@
+<mvc:View controllerName="purchaseorder.poorder.controller.Detail"
+    xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
+    <Page id="detailPage" title="Order Details" showNavButton="true" navButtonPress=".onNavBack">
+        <content>
+            <ObjectHeader title="{PurchaseOrder}" number="{PurchaseOrderType}" intro="{SupplierName}">
+                <attributes>
+                    <ObjectAttribute title="Company" text="{CompanyCode}" />
+                    <ObjectAttribute title="Plant" text="{Plant}" />
+                </attributes>
+            </ObjectHeader>
+            
+            <Table id="itemsTable" items="{to_PurchaseOrderItem}" mode="None">
+                <headerToolbar>
+                    <Toolbar>
+                        <Title text="Items" level="H3"/>
+                        <ToolbarSpacer />
+                        
+                        <Button text="Edit" type="Transparent" 
+                                press=".onEditPress" 
+                                visible="{= !${viewModel>/isEditable} }" />
+
+                        <Button text="Push Data" type="Emphasized" 
+                                press=".onPushData" 
+                                visible="{viewModel>/isEditable}" />
+                        <Button text="Cancel" type="Reject" 
+                                press=".onCancelPress" 
+                                visible="{viewModel>/isEditable}" />
+                    </Toolbar>
+                </headerToolbar>
+
+                <columns>
+                    <Column width="3rem"><Text text="Item" /></Column>
+                    <Column width="6rem"><Text text="Product" /></Column>
+                    <Column width="4rem"><Text text="Loc" /></Column>
+                    <Column width="5rem"><Text text="Order Qty" /></Column>
+                    <Column width="8rem"><Text text="Gate Rcvd" /></Column>
+                    <Column width="4rem"><Text text="GR Qty" /></Column>
+                    <Column width="4rem"><Text text="Open Qty" /></Column>
+                    <Column><Text text="Driver Name" /></Column>
+                    <Column width="7rem"><Text text="Mobile" /></Column>
+                    <Column width="7rem"><Text text="Vehicle No" /></Column>
+                    <Column><Text text="Comments" /></Column>
+                </columns>
+                
+                <items>
+                    <ColumnListItem type="Navigation" press=".onItemPress">
+                        <cells>
+                            <Text text="{PurchaseOrderItem}" />
+                            <Text text="{Product}" />
+                            <Text text="{StorageLocation}" />
+                            <Text text="{OrderQuantity}" />
+
+                            <StepInput 
+                                value="{
+                                    path: 'GateReceivedQuantity', 
+                                    type: 'sap.ui.model.odata.type.Decimal', 
+                                    constraints: { precision: 13, scale: 3 }
+                                }" 
+                                min="0" 
+                                width="100%"
+                                editable="{viewModel>/isEditable}" />
+
+                            <Text text="{GrQuantity}" />
+                            <Text text="{OpenQuantity}" />
+
+                            <Input value="{drivername}" 
+                                   placeholder="Name" 
+                                   editable="{viewModel>/isEditable}"/>
+
+                            <Input value="{mobile}" 
+                                   placeholder="Mobile" 
+                                   editable="{viewModel>/isEditable}"/>
+
+                            <Input value="{vehiclenumber}" 
+                                   placeholder="Vehicle" 
+                                   editable="{viewModel>/isEditable}"/> 
+
+                            <Input value="{comments}" 
+                                   placeholder="Comments" 
+                                   editable="{viewModel>/isEditable}"/>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+        </Page>
+</mvc:View>

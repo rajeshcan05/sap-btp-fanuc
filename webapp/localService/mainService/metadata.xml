@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+    <edmx:Reference Uri="https://DEV.SAP.FANUCINDIA.COM:443/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_AGGREGATION',Version='0001',SAP__Origin='')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="Aggregation"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://DEV.SAP.FANUCINDIA.COM:443/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_ANALYTICS',Version='0001',SAP__Origin='')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.Analytics.v1" Alias="Analytics"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://DEV.SAP.FANUCINDIA.COM:443/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="Capabilities"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://DEV.SAP.FANUCINDIA.COM:443/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CODELIST',Version='0001',SAP__Origin='')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.CodeList.v1" Alias="SAP__CodeList"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://DEV.SAP.FANUCINDIA.COM:443/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://DEV.SAP.FANUCINDIA.COM:443/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://DEV.SAP.FANUCINDIA.COM:443/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://DEV.SAP.FANUCINDIA.COM:443/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_PERSONALDATA',Version='0001',SAP__Origin='')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.PersonalData.v1" Alias="PersonalData"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://DEV.SAP.FANUCINDIA.COM:443/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://DEV.SAP.FANUCINDIA.COM:443/sap/opu/odata/iwfnd/catalogservice;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_VALIDATION',Version='0001',SAP__Origin='')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+        <edmx:Include Namespace="Org.OData.Validation.V1" Alias="Validation"/>
+    </edmx:Reference>
+    <edmx:DataServices m:DataServiceVersion="2.0">
+        <Schema Namespace="cds_zapi_gate_pass_po_info" xml:lang="en" sap:schema-version="1" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="zi_gate_item_infoType" sap:label="Gate Item view" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Gatepassid"/>
+                    <PropertyRef Name="Item"/>
+                </Key>
+                <Property Name="Gatepassid" Type="Edm.String" Nullable="false" MaxLength="10"/>
+                <Property Name="Item" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="NonNegative"/>
+                <Property Name="ebelp" Type="Edm.String" MaxLength="5" sap:display-format="NonNegative" sap:label="Item" sap:quickinfo="Item Number of Purchasing Document"/>
+                <Property Name="Order_id" Type="Edm.String" MaxLength="10"/>
+                <Property Name="Unit" Type="Edm.String" MaxLength="3" sap:label="Base Unit of Measure" sap:semantics="unit-of-measure"/>
+                <Property Name="GateReceivedQuantity" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="Unit" sap:label="Received Quantity"/>
+                <Property Name="Status" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Order Status"/>
+                <Property Name="Vehiclenumber" Type="Edm.String" MaxLength="16"/>
+                <Property Name="Drivername" Type="Edm.String" MaxLength="40"/>
+                <Property Name="Mobile" Type="Edm.String" MaxLength="30" sap:display-format="UpperCase" sap:label="Mobile Phone" sap:quickinfo="First Cell Phone Number: Dialing Code + Number"/>
+                <Property Name="Validitydate" Type="Edm.DateTime" Precision="0" sap:display-format="Date"/>
+                <Property Name="Comments" Type="Edm.String" MaxLength="250"/>
+                <Property Name="Erdat" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Created On" sap:quickinfo="Record Created On"/>
+                <Property Name="Ernam" Type="Edm.String" MaxLength="12" sap:display-format="UpperCase" sap:label="Created by" sap:quickinfo="Name of Person who Created the Object"/>
+            </EntityType>
+            <EntityType Name="zi_p2p_PO_HEADType" sap:label="Purchase Order (PO)" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="PurchaseOrder"/>
+                </Key>
+                <Property Name="PurchaseOrder" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Purchasing Document" sap:quickinfo="Purchasing Document Number"/>
+                <Property Name="PurchaseOrderType" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Purchasing Doc. Type" sap:quickinfo="Purchasing Document Type"/>
+                <Property Name="CompanyCode" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code"/>
+                <Property Name="PurchasingDocumentCategory" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Purch. Doc. Category" sap:quickinfo="Purchasing Document Category"/>
+                <Property Name="Supplier" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Supplier" sap:quickinfo="Account Number of Supplier"/>
+                <Property Name="SupplierName" Type="Edm.String" MaxLength="80" sap:label="Name of Supplier"/>
+                <Property Name="SupplierFullName" Type="Edm.String" MaxLength="220" sap:display-format="UpperCase" sap:label="Supplier Name" sap:quickinfo="Supplier Full Name"/>
+                <Property Name="PaymentTerms" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Terms of Payment" sap:quickinfo="Terms of Payment Key"/>
+                <Property Name="PurchasingOrganization" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Purch. Organization" sap:quickinfo="Purchasing Organization"/>
+                <Property Name="PurchasingGroup" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:label="Purchasing Group"/>
+                <Property Name="Plant" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Plant"/>
+                <NavigationProperty Name="to_PurchaseOrderItem" Relationship="cds_zapi_gate_pass_po_info.assoc_FF832CD59BCA16F572C3003E82E3ECF4" FromRole="FromRole_assoc_FF832CD59BCA16F572C3003E82E3ECF4" ToRole="ToRole_assoc_FF832CD59BCA16F572C3003E82E3ECF4"/>
+            </EntityType>
+            <EntityType Name="zi_p2p_PO_ItemType" sap:label="Purchase Order Item" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="PurchaseOrder"/>
+                    <PropertyRef Name="PurchaseOrderItem"/>
+                </Key>
+                <Property Name="PurchaseOrder" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Purchasing Document" sap:quickinfo="Purchasing Document Number" sap:creatable="false" sap:updatable="false"/>
+                <Property Name="PurchaseOrderItem" Type="Edm.String" Nullable="false" MaxLength="5" sap:display-format="NonNegative" sap:label="Item" sap:quickinfo="Item Number of Purchasing Document"/>
+                <Property Name="PurchasingDocumentCategory" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Purch. Doc. Category" sap:quickinfo="Purchasing Document Category"/>
+                <Property Name="Material" Type="Edm.String" MaxLength="40" sap:display-format="UpperCase" sap:label="Material" sap:quickinfo="Material Number"/>
+                <Property Name="Product" Type="Edm.String" MaxLength="40" sap:display-format="UpperCase" sap:label="Material" sap:quickinfo="Material number"/>
+                <Property Name="ManufacturerMaterial" Type="Edm.String" MaxLength="40" sap:display-format="UpperCase" sap:label="Mfr Part Number" sap:quickinfo="Manufacturer Part Number"/>
+                <Property Name="ManufacturerPartNmbr" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Manufacturer" sap:quickinfo="Number of a Manufacturer"/>
+                <Property Name="Manufacturer" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Ext. manufacturer" sap:quickinfo="External manufacturer code name or number"/>
+                <Property Name="Plant" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Plant"/>
+                <Property Name="StorageLocation" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Storage Location"/>
+                <Property Name="MaterialGroup" Type="Edm.String" MaxLength="9" sap:display-format="UpperCase" sap:label="Material Group"/>
+                <Property Name="ProductGroup" Type="Edm.String" MaxLength="3" sap:label="Order Unit" sap:quickinfo="Purchase Order Unit of Measure" sap:semantics="unit-of-measure"/>
+                <Property Name="OrderQuantity" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="OrderQuantityUnit" sap:label="Order Quantity" sap:quickinfo="Purchase Order Quantity"/>
+                <Property Name="OrderQuantityUnit" Type="Edm.String" MaxLength="3" sap:label="Order Unit" sap:quickinfo="Purchase Order Unit of Measure" sap:semantics="unit-of-measure"/>
+                <Property Name="OrderItemQtyToBaseQtyNmrtr" Type="Edm.Decimal" Precision="5" Scale="0" sap:label="Equal To" sap:quickinfo="Numerator for Conversion of Order Unit to Base Unit"/>
+                <Property Name="NetPriceQuantity" Type="Edm.Decimal" Precision="5" Scale="0" sap:label="Price unit"/>
+                <Property Name="OpenQuantity" Type="Edm.Decimal" Precision="13" Scale="2" sap:unit="BaseUnit"/>
+                <Property Name="GrQuantity" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="BaseUnit"/>
+                <Property Name="BaseUnit" Type="Edm.String" MaxLength="3" sap:label="Base Unit of Measure" sap:semantics="unit-of-measure"/>
+                <Property Name="GateReceivedQuantity" Type="Edm.Decimal" Precision="13" Scale="3" sap:unit="BaseUnit"/>
+                <Property Name="drivername" Type="Edm.String" MaxLength="40"/>
+                <Property Name="mobile" Type="Edm.String" MaxLength="30" sap:display-format="UpperCase" sap:label="Mobile Phone" sap:quickinfo="First Cell Phone Number: Dialing Code + Number"/>
+                <Property Name="comments" Type="Edm.String" MaxLength="250"/>
+                <Property Name="status" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Order Status"/>
+                <Property Name="vehiclenumber" Type="Edm.String" MaxLength="16"/>
+                <NavigationProperty Name="to_PurchaseOrder" Relationship="cds_zapi_gate_pass_po_info.assoc_FF832CD59BCA16F572C3003E82E3ECF4" FromRole="ToRole_assoc_FF832CD59BCA16F572C3003E82E3ECF4" ToRole="FromRole_assoc_FF832CD59BCA16F572C3003E82E3ECF4"/>
+                <NavigationProperty Name="to_Gatepass_item_info" Relationship="cds_zapi_gate_pass_po_info.assoc_D35DCEA3DC4CDA0AB636B40C23E493EE" FromRole="FromRole_assoc_D35DCEA3DC4CDA0AB636B40C23E493EE" ToRole="ToRole_assoc_D35DCEA3DC4CDA0AB636B40C23E493EE"/>
+            </EntityType>
+            <Association Name="assoc_D35DCEA3DC4CDA0AB636B40C23E493EE" sap:content-version="1">
+                <End Type="cds_zapi_gate_pass_po_info.zi_p2p_PO_ItemType" Multiplicity="1" Role="FromRole_assoc_D35DCEA3DC4CDA0AB636B40C23E493EE"/>
+                <End Type="cds_zapi_gate_pass_po_info.zi_gate_item_infoType" Multiplicity="*" Role="ToRole_assoc_D35DCEA3DC4CDA0AB636B40C23E493EE"/>
+            </Association>
+            <Association Name="assoc_FF832CD59BCA16F572C3003E82E3ECF4" sap:content-version="1">
+                <End Type="cds_zapi_gate_pass_po_info.zi_p2p_PO_HEADType" Multiplicity="1" Role="FromRole_assoc_FF832CD59BCA16F572C3003E82E3ECF4">
+                    <OnDelete Action="Cascade"/>
+                </End>
+                <End Type="cds_zapi_gate_pass_po_info.zi_p2p_PO_ItemType" Multiplicity="*" Role="ToRole_assoc_FF832CD59BCA16F572C3003E82E3ECF4"/>
+                <ReferentialConstraint>
+                    <Principal Role="FromRole_assoc_FF832CD59BCA16F572C3003E82E3ECF4">
+                        <PropertyRef Name="PurchaseOrder"/>
+                    </Principal>
+                    <Dependent Role="ToRole_assoc_FF832CD59BCA16F572C3003E82E3ECF4">
+                        <PropertyRef Name="PurchaseOrder"/>
+                    </Dependent>
+                </ReferentialConstraint>
+            </Association>
+            <EntityContainer Name="cds_zapi_gate_pass_po_info_Entities" m:IsDefaultEntityContainer="true" sap:message-scope-supported="true" sap:supported-formats="atom json xlsx">
+                <EntitySet Name="zi_gate_item_info" EntityType="cds_zapi_gate_pass_po_info.zi_gate_item_infoType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="zi_p2p_PO_HEAD" EntityType="cds_zapi_gate_pass_po_info.zi_p2p_PO_HEADType" sap:content-version="1"/>
+                <EntitySet Name="zi_p2p_PO_Item" EntityType="cds_zapi_gate_pass_po_info.zi_p2p_PO_ItemType" sap:creatable="false" sap:content-version="1"/>
+                <AssociationSet Name="assoc_FF832CD59BCA16F572C3003E82E3ECF4" Association="cds_zapi_gate_pass_po_info.assoc_FF832CD59BCA16F572C3003E82E3ECF4" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="zi_p2p_PO_HEAD" Role="FromRole_assoc_FF832CD59BCA16F572C3003E82E3ECF4"/>
+                    <End EntitySet="zi_p2p_PO_Item" Role="ToRole_assoc_FF832CD59BCA16F572C3003E82E3ECF4"/>
+                </AssociationSet>
+                <AssociationSet Name="assoc_D35DCEA3DC4CDA0AB636B40C23E493EE" Association="cds_zapi_gate_pass_po_info.assoc_D35DCEA3DC4CDA0AB636B40C23E493EE" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+                    <End EntitySet="zi_p2p_PO_Item" Role="FromRole_assoc_D35DCEA3DC4CDA0AB636B40C23E493EE"/>
+                    <End EntitySet="zi_gate_item_info" Role="ToRole_assoc_D35DCEA3DC4CDA0AB636B40C23E493EE"/>
+                </AssociationSet>
+            </EntityContainer>
+            <Annotation Term="Core.SchemaVersion" String="1.0.0" xmlns="http://docs.oasis-open.org/odata/ns/edm"/>
+            <Annotations Target="cds_zapi_gate_pass_po_info.cds_zapi_gate_pass_po_info_Entities" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.ApplyMultiUnitBehaviorForSortingAndFiltering" Bool="true"/>
+            </Annotations>
+            <Annotations Target="cds_zapi_gate_pass_po_info.zi_p2p_PO_HEADType/to_PurchaseOrderItem" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Common.Composition"/>
+            </Annotations>
+            <Annotations Target="cds_zapi_gate_pass_po_info.cds_zapi_gate_pass_po_info_Entities/zi_p2p_PO_HEAD" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Capabilities.NavigationRestrictions">
+                    <Record>
+                        <PropertyValue Property="RestrictedProperties">
+                            <Collection>
+                                <Record>
+                                    <PropertyValue Property="NavigationProperty" NavigationPropertyPath="to_PurchaseOrderItem"/>
+                                    <PropertyValue Property="InsertRestrictions">
+                                        <Record>
+                                            <PropertyValue Property="Insertable" Bool="true"/>
+                                        </Record>
+                                    </PropertyValue>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__core.OptimisticConcurrency">
+                    <Collection/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="cds_zapi_gate_pass_po_info.cds_zapi_gate_pass_po_info_Entities/zi_p2p_PO_Item" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="SAP__core.OptimisticConcurrency">
+                    <Collection/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="cds_zapi_gate_pass_po_info.cds_zapi_gate_pass_po_info_Entities" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+                <Annotation Term="Org.OData.Capabilities.V1.BatchSupport">
+                    <Record Type="Org.OData.Capabilities.V1.BatchSupportType">
+                        <PropertyValue Property="ReferencesAcrossChangeSetsSupported" Bool="true"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <atom:link rel="self" href="https://DEV.SAP.FANUCINDIA.COM:443/sap/opu/odata/sap/ZAPI_GATE_PASS_PO_SB_INFO/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+            <atom:link rel="latest-version" href="https://DEV.SAP.FANUCINDIA.COM:443/sap/opu/odata/sap/ZAPI_GATE_PASS_PO_SB_INFO/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

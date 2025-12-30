@@ -1,0 +1,131 @@
+{
+  "_version": "1.48.0",
+  "sap.app": {
+    "id": "purchaseorder.poorder",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:basic",
+      "version": "1.20.0",
+      "toolsId": "7f7800c8-c657-4626-9264-e34c6e72ebbd"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/sap/opu/odata/sap/ZAPI_GATE_PASS_PO_SB_INFO/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/mainService/metadata.xml",
+          "odataVersion": "2.0"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.108.9",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "purchaseorder.poorder.i18n.i18n"
+        }
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+           "defaultBindingMode": "TwoWay"
+        }
+      }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/style.css"
+        }
+      ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "async": true,
+        "viewPath": "purchaseorder.poorder.view",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "clearControlAggregation": false,
+        "transition": "slide"
+      },
+      "routes": [
+        {
+          "name": "RouteList",
+          "pattern": "",
+          "target": "TargetList"
+        },
+        {
+          "name": "RouteDetail",
+          "pattern": "Order/{PurchaseOrder}",
+          "target": "TargetDetail"
+        },
+        {
+          "name": "RouteSubDetail",
+          "pattern": "Order/{PurchaseOrder}/Item/{PurchaseOrderItem}",
+          "target": "TargetSubDetail"
+        }
+      ],
+      "targets": {
+        "TargetList": {
+          "viewName": "List",
+          "viewLevel": 1
+        },
+        "TargetDetail": {
+          "viewName": "Detail",
+          "viewLevel": 2
+        },
+        "TargetSubDetail": {
+          "viewName": "SubDetail",
+          "viewLevel": 3
+        }
+      }
+    },
+    "rootView": {
+      "viewName": "purchaseorder.poorder.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "App"
+    }
+  }
+}

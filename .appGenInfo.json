@@ -1,0 +1,24 @@
+{
+  "generationParameters": {
+    "generationDate": "Tue Dec 30 2025 09:01:24 GMT+0000 (Coordinated Universal Time)",
+    "generatorPlatform": "SAP Business Application Studio",
+    "serviceType": "SAP System (ABAP On-Premise)",
+    "metadataFilename": "",
+    "serviceUrl": "http://dev.sap.fanucindia.com:443/sap/opu/odata/sap/ZAPI_GATE_PASS_PO_SB_INFO",
+    "appName": "poorder",
+    "appTitle": "Purchase Order",
+    "appDescription": "An SAP Fiori application.",
+    "appNamespace": "purchaseorder",
+    "ui5Theme": "sap_horizon",
+    "ui5Version": "1.108.9",
+    "enableCodeAssist": false,
+    "enableEslint": false,
+    "enableTypeScript": false,
+    "showMockDataInfo": true,
+    "generatorVersion": "1.20.0",
+    "template": "Basic V2",
+    "generatorName": "SAP Fiori Application Generator",
+    "entityRelatedConfig": [],
+    "launchText": "To launch the generated application, run the following from the generated application root folder:\n\n```\n    npm start\n```"
+  }
+}

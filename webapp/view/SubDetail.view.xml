@@ -1,0 +1,39 @@
+<mvc:View controllerName="purchaseorder.poorder.controller.SubDetail"
+    xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
+    <Page id="subDetailPage" title="Gate Pass Info" showNavButton="true" navButtonPress=".onNavBack">
+        <content>
+            <ObjectHeader title="PO: {PurchaseOrder}" number="Item: {PurchaseOrderItem}">
+                <attributes>
+                    <ObjectAttribute title="Material" text="{Product}" />
+                    <ObjectAttribute title="Plant" text="{Plant}" />
+                </attributes>
+            </ObjectHeader>
+
+            <Table id="gatePassTable" items="{GatePassModel>/results}">
+                <headerToolbar>
+                    <Toolbar><Title text="Gate Pass Entries" /></Toolbar>
+                </headerToolbar>
+                <columns>
+                    <Column><Text text="Gate Pass ID" /></Column>
+                    <Column><Text text="Driver Name" /></Column>
+                    <Column><Text text="Vehicle No" /></Column>
+                    <Column><Text text="Gate Rcvd Qty" /></Column>
+                    <Column><Text text="Status" /></Column>
+                    <Column><Text text="Comments" /></Column>
+                </columns>
+                <items>
+                    <ColumnListItem>
+                        <cells>
+                            <Text text="{GatePassModel>Gatepassid}" />
+                            <Text text="{GatePassModel>Drivername}" />
+                            <Text text="{GatePassModel>Vehiclenumber}" />
+                            <Text text="{GatePassModel>GateReceivedQuantity} {GatePassModel>Unit}" />
+                            <ObjectStatus text="{GatePassModel>Status}" state="{= ${GatePassModel>Status} === 'IN' ? 'Success' : 'None' }" />
+                            <Text text="{GatePassModel>Comments}" />
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+    </Page>
+</mvc:View>
