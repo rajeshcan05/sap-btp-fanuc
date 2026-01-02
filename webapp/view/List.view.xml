@@ -1,7 +1,7 @@
 <mvc:View controllerName="purchaseorder.poorder.controller.List"
     xmlns="sap.m" 
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns:fb="sap.ui.comp.filterbar"> <Page id="listPage" title="Inbound Gate Pass">
+    xmlns:fb="sap.ui.comp.filterbar"> <Page id="listPage" title="">
         <content>
             <fb:FilterBar id="filterBar" search=".onSearch" useToolbar="false" showGoOnFB="true">
                 <fb:filterGroupItems>
