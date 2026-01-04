@@ -30,6 +30,7 @@ server:
       configuration:
         flp:
           theme: sap_horizon
+          path: test/flp.html
     - name: sap-fe-mockserver
       beforeMiddleware: csp
       configuration:

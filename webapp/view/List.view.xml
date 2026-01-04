@@ -1,42 +1,101 @@
-<mvc:View controllerName="purchaseorder.poorder.controller.List"
-    xmlns="sap.m" 
+<mvc:View
+    controllerName="purchaseorder.poorder.controller.List"
+    xmlns="sap.m"
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns:fb="sap.ui.comp.filterbar"> <Page id="listPage" title="">
+    xmlns:fb="sap.ui.comp.filterbar">
+
+    <Page id="listPage" title="Inbound Gate Pass">
+
         <content>
-            <fb:FilterBar id="filterBar" search=".onSearch" useToolbar="false" showGoOnFB="true">
+
+            <!-- ===================== -->
+            <!-- Filter Bar -->
+            <!-- ===================== -->
+            <fb:FilterBar
+                id="filterBar"
+                search=".onSearch"
+                useToolbar="false"
+                showGoOnFB="true">
+
                 <fb:filterGroupItems>
-                    <fb:FilterGroupItem groupName="G1" name="A" label="Purchase Order" visibleInFilterBar="true">
+
+                    <fb:FilterGroupItem
+                        groupName="G1"
+                        name="PO"
+                        label="Purchase Order"
+                        visibleInFilterBar="true">
                         <fb:control>
-                            <Input id="searchPO" placeholder="Enter PO Number"/>
+                            <Input
+                                id="searchPO"
+                                placeholder="Enter PO Number"/>
                         </fb:control>
                     </fb:FilterGroupItem>
 
-                    <fb:FilterGroupItem groupName="G1" name="B" label="Supplier" visibleInFilterBar="true">
+                    <fb:FilterGroupItem
+                        groupName="G1"
+                        name="SUP"
+                        label="Supplier"
+                        visibleInFilterBar="true">
                         <fb:control>
-                            <Input id="searchSupplier" placeholder="Enter Supplier ID"/>
+                            <Input
+                                id="searchSupplier"
+                                placeholder="Enter Supplier ID"/>
                         </fb:control>
                     </fb:FilterGroupItem>
 
-                    <fb:FilterGroupItem groupName="G1" name="C" label="Plant" visibleInFilterBar="true">
+                    <fb:FilterGroupItem
+                        groupName="G1"
+                        name="PLANT"
+                        label="Plant"
+                        visibleInFilterBar="true">
                         <fb:control>
-                            <Input id="searchPlant" placeholder="Enter Plant"/>
+                            <Input
+                                id="searchPlant"
+                                placeholder="Enter Plant"/>
                         </fb:control>
                     </fb:FilterGroupItem>
 
-                    <fb:FilterGroupItem groupName="G1" name="D" label="Company Code" visibleInFilterBar="true">
+                    <fb:FilterGroupItem
+                        groupName="G1"
+                        name="COMP"
+                        label="Company Code"
+                        visibleInFilterBar="true">
                         <fb:control>
-                            <Input id="searchCompCode" placeholder="Enter Company Code"/>
+                            <Input
+                                id="searchCompCode"
+                                placeholder="Enter Company Code"/>
                         </fb:control>
                     </fb:FilterGroupItem>
+
                 </fb:filterGroupItems>
             </fb:FilterBar>
 
-            <Table id="ordersTable" items="{/zi_p2p_PO_HEAD}" mode="SingleSelectMaster" itemPress=".onListItemPress">
+            <!-- ===================== -->
+            <!-- Orders Table (Pagination Enabled) -->
+            <!-- ===================== -->
+            <Table
+                id="ordersTable"
+                items="{
+                    path: '/zi_p2p_PO_HEAD'
+                }"
+                mode="SingleSelectMaster"
+                itemPress=".onListItemPress"
+                growing="true"
+                growingScrollToLoad="true"
+                growingThreshold="100">
+
+                <!-- Header -->
                 <headerToolbar>
                     <Toolbar>
-                        <Title text="Inbound Gate Pass ({= ${/zi_p2p_PO_HEAD}.length || 0 })" level="H2"/>
+                        <Title
+                            text="Inbound Gate Pass"
+                            level="H2"/>
+                        <ToolbarSpacer />
+                        <Text text="Scroll to load more" />
                     </Toolbar>
                 </headerToolbar>
+
+                <!-- Columns -->
                 <columns>
                     <Column><Text text="PO Number" /></Column>
                     <Column><Text text="Type" /></Column>
@@ -44,9 +103,15 @@
                     <Column><Text text="Plant" /></Column>
                     <Column><Text text="Supplier" /></Column>
                     <Column><Text text="Supplier Name" /></Column>
+                    <Column><Text text="PO Date" /></Column>
                 </columns>
+
+                <!-- Rows -->
                 <items>
-                    <ColumnListItem type="Navigation">
+                    <ColumnListItem
+                        type="Navigation"
+                        press=".onListItemPress">
+
                         <cells>
                             <Text text="{PurchaseOrder}" />
                             <Text text="{PurchaseOrderType}" />
@@ -54,10 +119,19 @@
                             <Text text="{Plant}" />
                             <Text text="{Supplier}" />
                             <Text text="{SupplierName}" />
+
+                            <Text text="{
+                                path: 'purchaseorderdate',
+                                type: 'sap.ui.model.type.Date',
+                                formatOptions: { style: 'medium' }
+                            }" />
                         </cells>
+
                     </ColumnListItem>
                 </items>
+
             </Table>
+
         </content>
     </Page>
 </mvc:View>

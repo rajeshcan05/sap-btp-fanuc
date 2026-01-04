@@ -25,7 +25,24 @@
           "odataVersion": "2.0"
         }
       }
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "PurchaseOrder-open": {
+          "semanticObject": "PurchaseOrder",
+          "action": "open",
+          "title": "{{appTitle}}",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
+        }
+      }
     }
+  },
+  "sap.cloud": {
+    "public": true,
+    "service": "purchaseorderpoorder"
   },
   "sap.ui": {
     "technology": "UI5",
@@ -67,8 +84,8 @@
         "dataSource": "mainService",
         "preload": true,
         "settings": {
-           "defaultBindingMode": "TwoWay",
-           "useBatch": false
+          "defaultBindingMode": "TwoWay",
+          "useBatch": false
         }
       }
     },

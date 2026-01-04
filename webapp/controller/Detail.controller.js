@@ -186,195 +186,437 @@
 // });
 
 
+// sap.ui.define([
+//     "sap/ui/core/mvc/Controller",
+//     "sap/ui/core/routing/History",
+//     "sap/m/MessageBox",
+//     "sap/m/MessageToast",
+//     "sap/ui/model/json/JSONModel"
+// ], function (Controller, History, MessageBox, MessageToast, JSONModel) {
+//     "use strict";
+
+//     return Controller.extend("purchaseorder.poorder.controller.Detail", {
+
+//         /* =========================================================== */
+//         /* Lifecycle Methods                                           */
+//         /* =========================================================== */
+
+//         onInit: function () {
+//             var oRouter = this.getOwnerComponent().getRouter();
+//             oRouter.getRoute("RouteDetail").attachPatternMatched(this._onObjectMatched, this);
+
+//             // Local view model to handle Edit/Read-only state
+//             var oViewModel = new JSONModel({
+//                 isEditable: false
+//             });
+//             this.getView().setModel(oViewModel, "viewModel");
+
+//             // [NEW] Track modified rows to send only changed data
+//             this._oModifiedPaths = new Set(); 
+//         },
+
+//         _onObjectMatched: function (oEvent) {
+//             var sPurchaseOrder = oEvent.getParameter("arguments").PurchaseOrder;
+//             this.getView().bindElement({
+//                 path: "/zi_p2p_PO_HEAD('" + sPurchaseOrder + "')"
+//             });
+//             // Clear modified tracking when loading a new page
+//             this._oModifiedPaths.clear();
+//         },
+
+//         /* =========================================================== */
+//         /* Edit Mode Logic                                             */
+//         /* =========================================================== */
+
+//         onEditPress: function () {
+//             this.getView().getModel("viewModel").setProperty("/isEditable", true);
+//         },
+
+//         onCancelPress: function () {
+//             var oModel = this.getView().getModel();
+//             if (oModel.hasPendingChanges()) {
+//                 oModel.resetChanges();
+//             }
+//             this.getView().getModel("viewModel").setProperty("/isEditable", false);
+//             this._oModifiedPaths.clear(); // Reset tracking
+//         },
+
+//         /* =========================================================== */
+//         /* Data Handling & Tracking                                    */
+//         /* =========================================================== */
+
+//         // [NEW] Generic handler for standard Inputs (Driver, Vehicle, etc.)
+//         onFieldChange: function(oEvent) {
+//             var oCtx = oEvent.getSource().getBindingContext();
+//             // Mark this row path as modified
+//             this._oModifiedPaths.add(oCtx.getPath());
+//         },
+
+//         // Handler for StepInput (Quantity)
+//         onQuantityChange: function(oEvent) {
+//             var oStepInput = oEvent.getSource();
+//             var fValue = oStepInput.getValue(); 
+//             var oCtx = oStepInput.getBindingContext();
+//             var sPath = oCtx.getPath();
+            
+//             // 1. Force update the model with String value
+//             this.getView().getModel().setProperty(sPath + "/GateReceivedQuantity", String(fValue));
+
+//             // 2. [NEW] Mark this row as modified
+//             this._oModifiedPaths.add(sPath);
+//         },
+
+//         /* =========================================================== */
+//         /* Push Logic                                                  */
+//         /* =========================================================== */
+
+//         onPushData: function () {
+//             var oView = this.getView();
+//             var oModel = oView.getModel();
+//             var oViewModel = oView.getModel("viewModel");
+
+//             // 1. Check if we have any modified items
+//             if (this._oModifiedPaths.size === 0) {
+//                 MessageBox.information("No changes detected to push.");
+//                 return;
+//             }
+
+//             // 2. Get Header Data
+//             var oHeaderCtx = oView.getBindingContext();
+//             if (!oHeaderCtx) {
+//                 MessageBox.error("No Header data loaded.");
+//                 return;
+//             }
+//             var oHeaderData = oHeaderCtx.getObject();
+
+//             // 3. Get All Items from the Table
+//             var oTable = oView.byId("itemsTable");
+//             var aContexts = oTable.getBinding("items").getContexts(); 
+//             var aPayloadItems = [];
+
+//             // 4. Loop through ALL items, but only add the MODIFIED ones
+//             for (var i = 0; i < aContexts.length; i++) {
+//                 var sPath = aContexts[i].getPath();
+
+//                 // [FILTER] Only add if this path was marked as modified
+//                 if (this._oModifiedPaths.has(sPath)) {
+//                     var oItemData = aContexts[i].getObject();
+
+//                     var oItemPayload = {
+//                         "PurchaseOrder":              oItemData.PurchaseOrder,
+//                         "PurchaseOrderItem":          oItemData.PurchaseOrderItem,
+//                         "PurchasingDocumentCategory": oItemData.PurchasingDocumentCategory,
+//                         "Material":                   oItemData.Material,
+//                         "Product":                    oItemData.Product,
+//                         "Plant":                      oItemData.Plant,
+//                         "StorageLocation":            oItemData.StorageLocation,
+//                         "MaterialGroup":              oItemData.MaterialGroup,
+//                         "ProductGroup":               oItemData.ProductGroup,
+//                         "OrderQuantity":              oItemData.OrderQuantity,
+//                         "OrderQuantityUnit":          oItemData.OrderQuantityUnit,
+//                         "OpenQuantity":               oItemData.OpenQuantity,
+//                         "GrQuantity":                 oItemData.GrQuantity,
+//                         "GateReceivedQuantity":       String(oItemData.GateReceivedQuantity), 
+//                         "drivername":                 oItemData.drivername || "",
+//                         "mobile":                     oItemData.mobile || "",
+//                         "comments":                   oItemData.comments || "",
+//                         "vehiclenumber":              oItemData.vehiclenumber || ""
+//                     };
+
+//                     aPayloadItems.push(oItemPayload);
+//                 }
+//             }
+
+//             // 5. Construct the Payload (Header + Modified Items Only)
+//             var oDeepPayload = {
+//                 "PurchaseOrder":              oHeaderData.PurchaseOrder,
+//                 "PurchaseOrderType":          oHeaderData.PurchaseOrderType,
+//                 "CompanyCode":                oHeaderData.CompanyCode,
+//                 "PurchasingDocumentCategory": oHeaderData.PurchasingDocumentCategory,
+//                 "Supplier":                   oHeaderData.Supplier,
+//                 "SupplierName":               oHeaderData.SupplierName,
+//                 "Plant":                      oHeaderData.Plant,
+//                 "to_PurchaseOrderItem":       aPayloadItems
+//             };
+
+//             // 6. Send POST Request
+//             sap.ui.core.BusyIndicator.show(0);
+            
+//             oModel.create("/zi_p2p_PO_HEAD", oDeepPayload, {
+//                 success: function (oData) {
+//                     sap.ui.core.BusyIndicator.hide();
+//                     MessageToast.show("Update Successful!");
+//                     oViewModel.setProperty("/isEditable", false);
+                    
+//                     // Clear the modification tracker
+//                     this._oModifiedPaths.clear(); 
+
+//                     // FIX FOR DUPLICATES:
+//                     // We must explicitly tell the View's element binding to reload from the server.
+//                     // This wipes out the "duplicate" entries caused by the POST workaround.
+//                     var oViewBinding = this.getView().getElementBinding();
+//                     if (oViewBinding) {
+//                         oViewBinding.refresh(true);
+//                     }
+
+//                     // Also force the table to refresh
+//                     var oTable = this.byId("itemsTable");
+//                     if (oTable) {
+//                         oTable.getBinding("items").refresh(true);
+//                     }
+//                 }.bind(this),// Bind 'this' to access _oModifiedPaths
+//                 error: function (oError) {
+//                     sap.ui.core.BusyIndicator.hide();
+//                     var sMsg = "Unknown Error";
+//                     try {
+//                         var oBody = JSON.parse(oError.responseText);
+//                         sMsg = oBody.error.message.value;
+//                     } catch (e) { 
+//                         sMsg = oError.message || oError.statusText;
+//                     }
+//                     MessageBox.error("Push Failed: " + sMsg);
+//                 }
+//             });
+//         },
+
+//         /* =========================================================== */
+//         /* Navigation                                                  */
+//         /* =========================================================== */
+
+//         onItemPress: function(oEvent) {
+//             var oItem = oEvent.getSource();
+//             var oCtx = oItem.getBindingContext();
+            
+//             this.getOwnerComponent().getRouter().navTo("RouteSubDetail", {
+//                 PurchaseOrder: oCtx.getProperty("PurchaseOrder"),
+//                 PurchaseOrderItem: oCtx.getProperty("PurchaseOrderItem")
+//             });
+//         },
+
+//         onNavBack: function () {
+//             var oHistory = History.getInstance();
+//             var sPreviousHash = oHistory.getPreviousHash();
+//             if (sPreviousHash !== undefined) {
+//                 window.history.go(-1);
+//             } else {
+//                 this.getOwnerComponent().getRouter().navTo("RouteList", {}, true);
+//             }
+//         }
+//     });
+// });
+
+
+
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/core/routing/History",
     "sap/m/MessageBox",
     "sap/m/MessageToast",
-    "sap/ui/model/json/JSONModel"
-], function (Controller, History, MessageBox, MessageToast, JSONModel) {
+    "sap/ui/model/json/JSONModel",
+    "sap/ui/core/BusyIndicator"
+], function (
+    Controller,
+    History,
+    MessageBox,
+    MessageToast,
+    JSONModel,
+    BusyIndicator
+) {
     "use strict";
 
     return Controller.extend("purchaseorder.poorder.controller.Detail", {
 
         /* =========================================================== */
-        /* Lifecycle Methods                                           */
+        /* Lifecycle                                                   */
         /* =========================================================== */
 
         onInit: function () {
             var oRouter = this.getOwnerComponent().getRouter();
-            oRouter.getRoute("RouteDetail").attachPatternMatched(this._onObjectMatched, this);
+            oRouter.getRoute("RouteDetail")
+                .attachPatternMatched(this._onObjectMatched, this);
 
-            // Local view model to handle Edit/Read-only state
+            // View model for edit state
             var oViewModel = new JSONModel({
                 isEditable: false
             });
             this.getView().setModel(oViewModel, "viewModel");
 
-            // [NEW] Track modified rows to send only changed data
-            this._oModifiedPaths = new Set(); 
+            // Track modified rows
+            this._oModifiedPaths = new Set();
         },
 
         _onObjectMatched: function (oEvent) {
             var sPurchaseOrder = oEvent.getParameter("arguments").PurchaseOrder;
+
             this.getView().bindElement({
                 path: "/zi_p2p_PO_HEAD('" + sPurchaseOrder + "')"
             });
-            // Clear modified tracking when loading a new page
+
             this._oModifiedPaths.clear();
+            this.getView().getModel("viewModel").setProperty("/isEditable", false);
         },
 
         /* =========================================================== */
-        /* Edit Mode Logic                                             */
+        /* Edit / Cancel                                               */
         /* =========================================================== */
 
         onEditPress: function () {
-            this.getView().getModel("viewModel").setProperty("/isEditable", true);
+            var oViewModel = this.getView().getModel("viewModel");
+
+            if (!oViewModel.getProperty("/isEditable")) {
+                oViewModel.setProperty("/isEditable", true);
+
+                MessageToast.show(
+                    "Edit mode enabled. Make your changes and save before pushing.",
+                    { duration: 3000 }
+                );
+            }
         },
 
         onCancelPress: function () {
             var oModel = this.getView().getModel();
+
             if (oModel.hasPendingChanges()) {
                 oModel.resetChanges();
             }
+
+            this._oModifiedPaths.clear();
             this.getView().getModel("viewModel").setProperty("/isEditable", false);
-            this._oModifiedPaths.clear(); // Reset tracking
+
+            MessageToast.show("Changes have been discarded.");
         },
 
         /* =========================================================== */
-        /* Data Handling & Tracking                                    */
+        /* Change Tracking                                             */
         /* =========================================================== */
 
-        // [NEW] Generic handler for standard Inputs (Driver, Vehicle, etc.)
-        onFieldChange: function(oEvent) {
+        onFieldChange: function (oEvent) {
             var oCtx = oEvent.getSource().getBindingContext();
-            // Mark this row path as modified
-            this._oModifiedPaths.add(oCtx.getPath());
+            if (oCtx) {
+                this._oModifiedPaths.add(oCtx.getPath());
+            }
         },
 
-        // Handler for StepInput (Quantity)
-        onQuantityChange: function(oEvent) {
-            var oStepInput = oEvent.getSource();
-            var fValue = oStepInput.getValue(); 
-            var oCtx = oStepInput.getBindingContext();
-            var sPath = oCtx.getPath();
-            
-            // 1. Force update the model with String value
-            this.getView().getModel().setProperty(sPath + "/GateReceivedQuantity", String(fValue));
+        onQuantityChange: function (oEvent) {
+            var oInput = oEvent.getSource();
+            var oCtx = oInput.getBindingContext();
 
-            // 2. [NEW] Mark this row as modified
+            if (!oCtx) {
+                return;
+            }
+
+            var sPath = oCtx.getPath();
+            var fValue = oInput.getValue();
+
+            this.getView()
+                .getModel()
+                .setProperty(sPath + "/GateReceivedQuantity", String(fValue));
+
             this._oModifiedPaths.add(sPath);
         },
 
         /* =========================================================== */
-        /* Push Logic                                                  */
+        /* Push Flow                                                   */
         /* =========================================================== */
 
         onPushData: function () {
+
+            // 1️⃣ No changes → info popup
+            if (this._oModifiedPaths.size === 0) {
+                MessageBox.information(
+                    "No changes detected. Please make changes before pushing."
+                );
+                return;
+            }
+
+            // 2️⃣ Confirm push
+            MessageBox.confirm(
+                "Do you want to push the changes?",
+                {
+                    title: "Confirm Push",
+                    actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+                    emphasizedAction: MessageBox.Action.OK,
+                    onClose: function (sAction) {
+                        if (sAction === MessageBox.Action.OK) {
+                            this._executePush();
+                        }
+                    }.bind(this)
+                }
+            );
+        },
+
+        /* =========================================================== */
+        /* Execute Push                                                */
+        /* =========================================================== */
+
+        _executePush: function () {
             var oView = this.getView();
             var oModel = oView.getModel();
             var oViewModel = oView.getModel("viewModel");
 
-            // 1. Check if we have any modified items
-            if (this._oModifiedPaths.size === 0) {
-                MessageBox.information("No changes detected to push.");
-                return;
-            }
-
-            // 2. Get Header Data
             var oHeaderCtx = oView.getBindingContext();
             if (!oHeaderCtx) {
-                MessageBox.error("No Header data loaded.");
+                MessageBox.error("Header data not available.");
                 return;
             }
-            var oHeaderData = oHeaderCtx.getObject();
 
-            // 3. Get All Items from the Table
+            var oHeaderData = oHeaderCtx.getObject();
             var oTable = oView.byId("itemsTable");
-            var aContexts = oTable.getBinding("items").getContexts(); 
+            var aContexts = oTable.getBinding("items").getContexts();
+
             var aPayloadItems = [];
 
-            // 4. Loop through ALL items, but only add the MODIFIED ones
-            for (var i = 0; i < aContexts.length; i++) {
-                var sPath = aContexts[i].getPath();
+            aContexts.forEach(function (oCtx) {
+                if (this._oModifiedPaths.has(oCtx.getPath())) {
+                    var oItem = oCtx.getObject();
 
-                // [FILTER] Only add if this path was marked as modified
-                if (this._oModifiedPaths.has(sPath)) {
-                    var oItemData = aContexts[i].getObject();
-
-                    var oItemPayload = {
-                        "PurchaseOrder":              oItemData.PurchaseOrder,
-                        "PurchaseOrderItem":          oItemData.PurchaseOrderItem,
-                        "PurchasingDocumentCategory": oItemData.PurchasingDocumentCategory,
-                        "Material":                   oItemData.Material,
-                        "Product":                    oItemData.Product,
-                        "Plant":                      oItemData.Plant,
-                        "StorageLocation":            oItemData.StorageLocation,
-                        "MaterialGroup":              oItemData.MaterialGroup,
-                        "ProductGroup":               oItemData.ProductGroup,
-                        "OrderQuantity":              oItemData.OrderQuantity,
-                        "OrderQuantityUnit":          oItemData.OrderQuantityUnit,
-                        "OpenQuantity":               oItemData.OpenQuantity,
-                        "GrQuantity":                 oItemData.GrQuantity,
-                        "GateReceivedQuantity":       String(oItemData.GateReceivedQuantity), 
-                        "drivername":                 oItemData.drivername || "",
-                        "mobile":                     oItemData.mobile || "",
-                        "comments":                   oItemData.comments || "",
-                        "vehiclenumber":              oItemData.vehiclenumber || ""
-                    };
-
-                    aPayloadItems.push(oItemPayload);
+                    aPayloadItems.push({
+                        PurchaseOrder: oItem.PurchaseOrder,
+                        PurchaseOrderItem: oItem.PurchaseOrderItem,
+                        GateReceivedQuantity: String(oItem.GateReceivedQuantity),
+                        drivername: oItem.drivername || "",
+                        mobile: oItem.mobile || "",
+                        vehiclenumber: oItem.vehiclenumber || "",
+                        comments: oItem.comments || ""
+                    });
                 }
-            }
+            }.bind(this));
 
-            // 5. Construct the Payload (Header + Modified Items Only)
-            var oDeepPayload = {
-                "PurchaseOrder":              oHeaderData.PurchaseOrder,
-                "PurchaseOrderType":          oHeaderData.PurchaseOrderType,
-                "CompanyCode":                oHeaderData.CompanyCode,
-                "PurchasingDocumentCategory": oHeaderData.PurchasingDocumentCategory,
-                "Supplier":                   oHeaderData.Supplier,
-                "SupplierName":               oHeaderData.SupplierName,
-                "Plant":                      oHeaderData.Plant,
-                "to_PurchaseOrderItem":       aPayloadItems
+            var oPayload = {
+                PurchaseOrder: oHeaderData.PurchaseOrder,
+                to_PurchaseOrderItem: aPayloadItems
             };
 
-            // 6. Send POST Request
-            sap.ui.core.BusyIndicator.show(0);
-            
-            oModel.create("/zi_p2p_PO_HEAD", oDeepPayload, {
-                success: function (oData) {
-                    sap.ui.core.BusyIndicator.hide();
-                    MessageToast.show("Update Successful!");
+            BusyIndicator.show(0);
+
+            oModel.create("/zi_p2p_PO_HEAD", oPayload, {
+                success: function () {
+                    BusyIndicator.hide();
+
+                    MessageBox.success(
+                        "Changes pushed successfully.",
+                        { title: "Success" }
+                    );
+
+                    this._oModifiedPaths.clear();
                     oViewModel.setProperty("/isEditable", false);
-                    
-                    // Clear the modification tracker
-                    this._oModifiedPaths.clear(); 
 
-                    // FIX FOR DUPLICATES:
-                    // We must explicitly tell the View's element binding to reload from the server.
-                    // This wipes out the "duplicate" entries caused by the POST workaround.
-                    var oViewBinding = this.getView().getElementBinding();
-                    if (oViewBinding) {
-                        oViewBinding.refresh(true);
-                    }
+                    oView.getElementBinding().refresh(true);
+                    oTable.getBinding("items").refresh(true);
+                }.bind(this),
 
-                    // Also force the table to refresh
-                    var oTable = this.byId("itemsTable");
-                    if (oTable) {
-                        oTable.getBinding("items").refresh(true);
-                    }
-                }.bind(this),// Bind 'this' to access _oModifiedPaths
                 error: function (oError) {
-                    sap.ui.core.BusyIndicator.hide();
-                    var sMsg = "Unknown Error";
+                    BusyIndicator.hide();
+
+                    var sMessage = "Push failed.";
                     try {
-                        var oBody = JSON.parse(oError.responseText);
-                        sMsg = oBody.error.message.value;
-                    } catch (e) { 
-                        sMsg = oError.message || oError.statusText;
-                    }
-                    MessageBox.error("Push Failed: " + sMsg);
+                        sMessage = JSON.parse(oError.responseText)
+                            .error.message.value;
+                    } catch (e) {}
+
+                    MessageBox.error(sMessage, {
+                        title: "Push Failed"
+                    });
                 }
             });
         },
@@ -383,10 +625,9 @@ sap.ui.define([
         /* Navigation                                                  */
         /* =========================================================== */
 
-        onItemPress: function(oEvent) {
-            var oItem = oEvent.getSource();
-            var oCtx = oItem.getBindingContext();
-            
+        onItemPress: function (oEvent) {
+            var oCtx = oEvent.getSource().getBindingContext();
+
             this.getOwnerComponent().getRouter().navTo("RouteSubDetail", {
                 PurchaseOrder: oCtx.getProperty("PurchaseOrder"),
                 PurchaseOrderItem: oCtx.getProperty("PurchaseOrderItem")
@@ -396,11 +637,14 @@ sap.ui.define([
         onNavBack: function () {
             var oHistory = History.getInstance();
             var sPreviousHash = oHistory.getPreviousHash();
+
             if (sPreviousHash !== undefined) {
                 window.history.go(-1);
             } else {
-                this.getOwnerComponent().getRouter().navTo("RouteList", {}, true);
+                this.getOwnerComponent().getRouter()
+                    .navTo("RouteList", {}, true);
             }
         }
+
     });
 });
