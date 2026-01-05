@@ -407,6 +407,262 @@
 
 
 
+/* =========================================================== */
+/*           VERSION 2                                         */
+/* =========================================================== */
+
+
+
+// sap.ui.define([
+//     "sap/ui/core/mvc/Controller",
+//     "sap/ui/core/routing/History",
+//     "sap/m/MessageBox",
+//     "sap/m/MessageToast",
+//     "sap/ui/model/json/JSONModel",
+//     "sap/ui/core/BusyIndicator"
+// ], function (
+//     Controller,
+//     History,
+//     MessageBox,
+//     MessageToast,
+//     JSONModel,
+//     BusyIndicator
+// ) {
+//     "use strict";
+
+//     return Controller.extend("purchaseorder.poorder.controller.Detail", {
+
+//         /* =========================================================== */
+//         /* Lifecycle                                                   */
+//         /* =========================================================== */
+
+//         onInit: function () {
+//             var oRouter = this.getOwnerComponent().getRouter();
+//             oRouter.getRoute("RouteDetail")
+//                 .attachPatternMatched(this._onObjectMatched, this);
+
+//             // View model for edit state
+//             var oViewModel = new JSONModel({
+//                 isEditable: false
+//             });
+//             this.getView().setModel(oViewModel, "viewModel");
+
+//             // Track modified rows
+//             this._oModifiedPaths = new Set();
+//         },
+
+//         _onObjectMatched: function (oEvent) {
+//             var sPurchaseOrder = oEvent.getParameter("arguments").PurchaseOrder;
+
+//             this.getView().bindElement({
+//                 path: "/zi_p2p_PO_HEAD('" + sPurchaseOrder + "')"
+//             });
+
+//             this._oModifiedPaths.clear();
+//             this.getView().getModel("viewModel").setProperty("/isEditable", false);
+//         },
+
+//         /* =========================================================== */
+//         /* Edit / Cancel                                               */
+//         /* =========================================================== */
+
+//         onEditPress: function () {
+//             var oViewModel = this.getView().getModel("viewModel");
+
+//             if (!oViewModel.getProperty("/isEditable")) {
+//                 oViewModel.setProperty("/isEditable", true);
+
+//                 MessageToast.show(
+//                     "Edit mode enabled. Make your changes and save before pushing.",
+//                     { duration: 3000 }
+//                 );
+//             }
+//         },
+
+//         onCancelPress: function () {
+//             var oModel = this.getView().getModel();
+
+//             if (oModel.hasPendingChanges()) {
+//                 oModel.resetChanges();
+//             }
+
+//             this._oModifiedPaths.clear();
+//             this.getView().getModel("viewModel").setProperty("/isEditable", false);
+
+//             MessageToast.show("Changes have been discarded.");
+//         },
+
+//         /* =========================================================== */
+//         /* Change Tracking                                             */
+//         /* =========================================================== */
+
+//         onFieldChange: function (oEvent) {
+//             var oCtx = oEvent.getSource().getBindingContext();
+//             if (oCtx) {
+//                 this._oModifiedPaths.add(oCtx.getPath());
+//             }
+//         },
+
+//         onQuantityChange: function (oEvent) {
+//             var oInput = oEvent.getSource();
+//             var oCtx = oInput.getBindingContext();
+
+//             if (!oCtx) {
+//                 return;
+//             }
+
+//             var sPath = oCtx.getPath();
+//             var fValue = oInput.getValue();
+
+//             this.getView()
+//                 .getModel()
+//                 .setProperty(sPath + "/GateReceivedQuantity", String(fValue));
+
+//             this._oModifiedPaths.add(sPath);
+//         },
+
+//         /* =========================================================== */
+//         /* Push Flow                                                   */
+//         /* =========================================================== */
+
+//         onPushData: function () {
+
+//             // 1️⃣ No changes → info popup
+//             if (this._oModifiedPaths.size === 0) {
+//                 MessageBox.information(
+//                     "No changes detected. Please make changes before pushing."
+//                 );
+//                 return;
+//             }
+
+//             // 2️⃣ Confirm push
+//             MessageBox.confirm(
+//                 "Do you want to push the changes?",
+//                 {
+//                     title: "Confirm Push",
+//                     actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+//                     emphasizedAction: MessageBox.Action.OK,
+//                     onClose: function (sAction) {
+//                         if (sAction === MessageBox.Action.OK) {
+//                             this._executePush();
+//                         }
+//                     }.bind(this)
+//                 }
+//             );
+//         },
+
+//         /* =========================================================== */
+//         /* Execute Push                                                */
+//         /* =========================================================== */
+
+//         _executePush: function () {
+//             var oView = this.getView();
+//             var oModel = oView.getModel();
+//             var oViewModel = oView.getModel("viewModel");
+
+//             var oHeaderCtx = oView.getBindingContext();
+//             if (!oHeaderCtx) {
+//                 MessageBox.error("Header data not available.");
+//                 return;
+//             }
+
+//             var oHeaderData = oHeaderCtx.getObject();
+//             var oTable = oView.byId("itemsTable");
+//             var aContexts = oTable.getBinding("items").getContexts();
+
+//             var aPayloadItems = [];
+
+//             aContexts.forEach(function (oCtx) {
+//                 if (this._oModifiedPaths.has(oCtx.getPath())) {
+//                     var oItem = oCtx.getObject();
+
+//                     aPayloadItems.push({
+//                         PurchaseOrder: oItem.PurchaseOrder,
+//                         PurchaseOrderItem: oItem.PurchaseOrderItem,
+//                         GateReceivedQuantity: String(oItem.GateReceivedQuantity),
+//                         drivername: oItem.drivername || "",
+//                         mobile: oItem.mobile || "",
+//                         vehiclenumber: oItem.vehiclenumber || "",
+//                         comments: oItem.comments || ""
+//                     });
+//                 }
+//             }.bind(this));
+
+//             var oPayload = {
+//                 PurchaseOrder: oHeaderData.PurchaseOrder,
+//                 to_PurchaseOrderItem: aPayloadItems
+//             };
+
+//             BusyIndicator.show(0);
+
+//             oModel.create("/zi_p2p_PO_HEAD", oPayload, {
+//                 success: function () {
+//                     BusyIndicator.hide();
+
+//                     MessageBox.success(
+//                         "Changes pushed successfully.",
+//                         { title: "Success" }
+//                     );
+
+//                     this._oModifiedPaths.clear();
+//                     oViewModel.setProperty("/isEditable", false);
+
+//                     oView.getElementBinding().refresh(true);
+//                     oTable.getBinding("items").refresh(true);
+//                 }.bind(this),
+
+//                 error: function (oError) {
+//                     BusyIndicator.hide();
+
+//                     var sMessage = "Push failed.";
+//                     try {
+//                         sMessage = JSON.parse(oError.responseText)
+//                             .error.message.value;
+//                     } catch (e) {}
+
+//                     MessageBox.error(sMessage, {
+//                         title: "Push Failed"
+//                     });
+//                 }
+//             });
+//         },
+
+//         /* =========================================================== */
+//         /* Navigation                                                  */
+//         /* =========================================================== */
+
+//         onItemPress: function (oEvent) {
+//             var oCtx = oEvent.getSource().getBindingContext();
+
+//             this.getOwnerComponent().getRouter().navTo("RouteSubDetail", {
+//                 PurchaseOrder: oCtx.getProperty("PurchaseOrder"),
+//                 PurchaseOrderItem: oCtx.getProperty("PurchaseOrderItem")
+//             });
+//         },
+
+//         onNavBack: function () {
+//             var oHistory = History.getInstance();
+//             var sPreviousHash = oHistory.getPreviousHash();
+
+//             if (sPreviousHash !== undefined) {
+//                 window.history.go(-1);
+//             } else {
+//                 this.getOwnerComponent().getRouter()
+//                     .navTo("RouteList", {}, true);
+//             }
+//         }
+
+//     });
+// });
+
+
+
+/* =========================================================== */
+/*           VERSION 3                                         */
+/* =========================================================== */
+
+
+
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/core/routing/History",
@@ -435,21 +691,18 @@ sap.ui.define([
             oRouter.getRoute("RouteDetail")
                 .attachPatternMatched(this._onObjectMatched, this);
 
-            // View model for edit state
-            var oViewModel = new JSONModel({
+            this.getView().setModel(new JSONModel({
                 isEditable: false
-            });
-            this.getView().setModel(oViewModel, "viewModel");
+            }), "viewModel");
 
-            // Track modified rows
             this._oModifiedPaths = new Set();
         },
 
         _onObjectMatched: function (oEvent) {
-            var sPurchaseOrder = oEvent.getParameter("arguments").PurchaseOrder;
+            var sPO = oEvent.getParameter("arguments").PurchaseOrder;
 
             this.getView().bindElement({
-                path: "/zi_p2p_PO_HEAD('" + sPurchaseOrder + "')"
+                path: "/zi_p2p_PO_HEAD('" + sPO + "')"
             });
 
             this._oModifiedPaths.clear();
@@ -461,15 +714,10 @@ sap.ui.define([
         /* =========================================================== */
 
         onEditPress: function () {
-            var oViewModel = this.getView().getModel("viewModel");
-
-            if (!oViewModel.getProperty("/isEditable")) {
-                oViewModel.setProperty("/isEditable", true);
-
-                MessageToast.show(
-                    "Edit mode enabled. Make your changes and save before pushing.",
-                    { duration: 3000 }
-                );
+            var oVM = this.getView().getModel("viewModel");
+            if (!oVM.getProperty("/isEditable")) {
+                oVM.setProperty("/isEditable", true);
+                MessageToast.show("Edit mode enabled.");
             }
         },
 
@@ -482,8 +730,7 @@ sap.ui.define([
 
             this._oModifiedPaths.clear();
             this.getView().getModel("viewModel").setProperty("/isEditable", false);
-
-            MessageToast.show("Changes have been discarded.");
+            MessageToast.show("Changes discarded.");
         },
 
         /* =========================================================== */
@@ -500,17 +747,15 @@ sap.ui.define([
         onQuantityChange: function (oEvent) {
             var oInput = oEvent.getSource();
             var oCtx = oInput.getBindingContext();
-
             if (!oCtx) {
                 return;
             }
 
             var sPath = oCtx.getPath();
-            var fValue = oInput.getValue();
+            var fGateQty = Number(oInput.getValue()) || 0;
 
-            this.getView()
-                .getModel()
-                .setProperty(sPath + "/GateReceivedQuantity", String(fValue));
+            this.getView().getModel()
+                .setProperty(sPath + "/GateReceivedQuantity", String(fGateQty));
 
             this._oModifiedPaths.add(sPath);
         },
@@ -520,103 +765,70 @@ sap.ui.define([
         /* =========================================================== */
 
         onPushData: function () {
-
-            // 1️⃣ No changes → info popup
             if (this._oModifiedPaths.size === 0) {
-                MessageBox.information(
-                    "No changes detected. Please make changes before pushing."
-                );
+                MessageBox.information("No changes detected.");
                 return;
             }
 
-            // 2️⃣ Confirm push
-            MessageBox.confirm(
-                "Do you want to push the changes?",
-                {
-                    title: "Confirm Push",
-                    actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-                    emphasizedAction: MessageBox.Action.OK,
-                    onClose: function (sAction) {
-                        if (sAction === MessageBox.Action.OK) {
-                            this._executePush();
-                        }
-                    }.bind(this)
-                }
-            );
+            MessageBox.confirm("Do you want to push the changes?", {
+                title: "Confirm Push",
+                emphasizedAction: MessageBox.Action.OK,
+                actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+                onClose: function (sAction) {
+                    if (sAction === MessageBox.Action.OK) {
+                        this._executePush();
+                    }
+                }.bind(this)
+            });
         },
-
-        /* =========================================================== */
-        /* Execute Push                                                */
-        /* =========================================================== */
 
         _executePush: function () {
             var oView = this.getView();
             var oModel = oView.getModel();
-            var oViewModel = oView.getModel("viewModel");
+            var oVM = oView.getModel("viewModel");
 
-            var oHeaderCtx = oView.getBindingContext();
-            if (!oHeaderCtx) {
-                MessageBox.error("Header data not available.");
-                return;
-            }
-
-            var oHeaderData = oHeaderCtx.getObject();
+            var oHeader = oView.getBindingContext().getObject();
             var oTable = oView.byId("itemsTable");
             var aContexts = oTable.getBinding("items").getContexts();
 
-            var aPayloadItems = [];
+            var aItems = [];
 
             aContexts.forEach(function (oCtx) {
                 if (this._oModifiedPaths.has(oCtx.getPath())) {
                     var oItem = oCtx.getObject();
 
-                    aPayloadItems.push({
+                    aItems.push({
                         PurchaseOrder: oItem.PurchaseOrder,
                         PurchaseOrderItem: oItem.PurchaseOrderItem,
                         GateReceivedQuantity: String(oItem.GateReceivedQuantity),
                         drivername: oItem.drivername || "",
                         mobile: oItem.mobile || "",
                         vehiclenumber: oItem.vehiclenumber || "",
-                        comments: oItem.comments || ""
+                        comments: oItem.comments || "",
+                        InvoiceNumber: oItem.InvoiceNumber || "",
+                        InvoiceDate: oItem.InvoiceDate || null,
+                        received: oItem.received === true
                     });
                 }
             }.bind(this));
 
-            var oPayload = {
-                PurchaseOrder: oHeaderData.PurchaseOrder,
-                to_PurchaseOrderItem: aPayloadItems
-            };
-
             BusyIndicator.show(0);
 
-            oModel.create("/zi_p2p_PO_HEAD", oPayload, {
+            oModel.create("/zi_p2p_PO_HEAD", {
+                PurchaseOrder: oHeader.PurchaseOrder,
+                to_PurchaseOrderItem: aItems
+            }, {
                 success: function () {
                     BusyIndicator.hide();
-
-                    MessageBox.success(
-                        "Changes pushed successfully.",
-                        { title: "Success" }
-                    );
-
+                    MessageBox.success("Data pushed successfully.");
                     this._oModifiedPaths.clear();
-                    oViewModel.setProperty("/isEditable", false);
-
+                    oVM.setProperty("/isEditable", false);
                     oView.getElementBinding().refresh(true);
                     oTable.getBinding("items").refresh(true);
                 }.bind(this),
-
                 error: function (oError) {
                     BusyIndicator.hide();
-
-                    var sMessage = "Push failed.";
-                    try {
-                        sMessage = JSON.parse(oError.responseText)
-                            .error.message.value;
-                    } catch (e) {}
-
-                    MessageBox.error(sMessage, {
-                        title: "Push Failed"
-                    });
+                    MessageBox.error("Push failed.");
                 }
             });
         },
@@ -627,7 +839,6 @@ sap.ui.define([
 
         onItemPress: function (oEvent) {
             var oCtx = oEvent.getSource().getBindingContext();
-
             this.getOwnerComponent().getRouter().navTo("RouteSubDetail", {
                 PurchaseOrder: oCtx.getProperty("PurchaseOrder"),
                 PurchaseOrderItem: oCtx.getProperty("PurchaseOrderItem")
@@ -635,10 +846,8 @@ sap.ui.define([
         },
 
         onNavBack: function () {
-            var oHistory = History.getInstance();
-            var sPreviousHash = oHistory.getPreviousHash();
-
-            if (sPreviousHash !== undefined) {
+            var sPrev = History.getInstance().getPreviousHash();
+            if (sPrev !== undefined) {
                 window.history.go(-1);
             } else {
                 this.getOwnerComponent().getRouter()

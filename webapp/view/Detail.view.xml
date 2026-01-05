@@ -1,110 +1,15 @@
-<!-- <mvc:View controllerName="purchaseorder.poorder.controller.Detail"
-    xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
-    <Page id="detailPage" title="Order Details" showNavButton="true" navButtonPress=".onNavBack">
-        <content>
-            <ObjectHeader title="{PurchaseOrder}" number="{PurchaseOrderType}" intro="{SupplierName}">
-                <attributes>
-                    <ObjectAttribute title="Company" text="{CompanyCode}" />
-                    <ObjectAttribute title="Plant" text="{Plant}" />
-                </attributes>
-            </ObjectHeader>
-            
-            <Table id="itemsTable" items="{to_PurchaseOrderItem}" mode="None">
-                <headerToolbar>
-                    <Toolbar>
-                        <Title text="Items" level="H3"/>
-                        <ToolbarSpacer />
-                        
-                        <Button text="Edit" type="Transparent" 
-                                press=".onEditPress" 
-                                visible="{= !${viewModel>/isEditable} }" />
-
-                        <Button text="Push Data" type="Emphasized" 
-                                press=".onPushData" 
-                                visible="{viewModel>/isEditable}" />
-                                
-                        <Button text="Cancel" type="Reject" 
-                                press=".onCancelPress" 
-                                visible="{viewModel>/isEditable}" />
-                    </Toolbar>
-                </headerToolbar>
-
-                <columns>
-                    <Column width="3rem"><Text text="Item" /></Column>
-                    <Column width="6rem"><Text text="Product" /></Column>
-                    <Column width="4rem"><Text text="Loc" /></Column>
-                    <Column width="5rem"><Text text="Order Qty" /></Column>
-                    <Column width="8rem"><Text text="Gate Rcvd" /></Column>
-                    <Column width="4rem"><Text text="GR Qty" /></Column>
-                    <Column width="4rem"><Text text="Open Qty" /></Column>
-                    <Column><Text text="Driver Name" /></Column>
-                    <Column width="7rem"><Text text="Mobile" /></Column>
-                    <Column width="7rem"><Text text="Vehicle No" /></Column>
-                    <Column><Text text="Comments" /></Column>
-                </columns>
-                
-                <items>
-                    <ColumnListItem type="Navigation" press=".onItemPress">
-                        <cells>
-                            <Text text="{PurchaseOrderItem}" />
-                            <Text text="{Product}" />
-                            <Text text="{StorageLocation}" />
-                            <Text text="{OrderQuantity}" />
-
-                            <StepInput 
-                                value="{
-                                    path: 'GateReceivedQuantity',
-                                    type: 'sap.ui.model.type.Float'
-                                }"
-                                min="0" 
-                                width="100%"
-                                editable="{viewModel>/isEditable}"
-                                change=".onQuantityChange" />
-
-                            <Text text="{GrQuantity}" />
-                            <Text text="{OpenQuantity}" />
-
-                            <Input value="{drivername}" 
-                                   placeholder="Name" 
-                                   editable="{viewModel>/isEditable}"/>
-
-                            <Input value="{mobile}" 
-                                   placeholder="Mobile" 
-                                   editable="{viewModel>/isEditable}"/>
-
-                            <Input value="{vehiclenumber}" 
-                                   placeholder="Vehicle" 
-                                   editable="{viewModel>/isEditable}"/> 
-
-                            <Input value="{comments}" 
-                                   placeholder="Comments" 
-                                   editable="{viewModel>/isEditable}"/>
-                        </cells>
-                    </ColumnListItem>
-                </items>
-            </Table>
-        </content>
-    </Page>
-</mvc:View>
- -->
-
-
 <mvc:View
     controllerName="purchaseorder.poorder.controller.Detail"
     xmlns="sap.m"
     xmlns:mvc="sap.ui.core.mvc">
 
     <Page
-        id="detailPage"
         title="Order Details"
         showNavButton="true"
         navButtonPress=".onNavBack">
 
         <content>
 
-            <!-- ===================== -->
-            <!-- Order Header -->
-            <!-- ===================== -->
             <ObjectHeader
                 title="{PurchaseOrder}"
                 number="{PurchaseOrderType}"
@@ -115,145 +20,109 @@
                 </attributes>
             </ObjectHeader>
 
-            <!-- ===================== -->
-            <!-- Items Table -->
-            <!-- ===================== -->
             <Table
                 id="itemsTable"
                 items="{to_PurchaseOrderItem}"
-                mode="None">
+                growing="true"
+                growingThreshold="50"
+                growingScrollToLoad="true">
 
-                <!-- Toolbar -->
                 <headerToolbar>
                     <Toolbar>
-                        <Title text="Items" level="H3" />
-                        <ToolbarSpacer />
-
-                        <Button
-                            text="Edit"
-                            type="Transparent"
-                            press=".onEditPress"
-                            visible="{= !${viewModel>/isEditable} }" />
-
-                        <Button
-                            text="Push Data"
-                            type="Emphasized"
+                        <Title text="Items" level="H3"/>
+                        <ToolbarSpacer/>
+                        <Button text="Edit" press=".onEditPress"
+                            visible="{= !${viewModel>/isEditable} }"/>
+                        <Button text="Push Data" type="Emphasized"
                             press=".onPushData"
-                            visible="{viewModel>/isEditable}" />
-
-                        <Button
-                            text="Cancel"
-                            type="Reject"
+                            visible="{viewModel>/isEditable}"/>
+                        <Button text="Cancel" type="Reject"
                             press=".onCancelPress"
-                            visible="{viewModel>/isEditable}" />
+                            visible="{viewModel>/isEditable}"/>
                     </Toolbar>
                 </headerToolbar>
 
-                <!-- ===================== -->
-                <!-- Columns (TIGHT QTY + WIDE COMMENTS) -->
-                <!-- ===================== -->
                 <columns>
+                    <Column><Text text="Item"/></Column>
+                    <Column><Text text="Material"/></Column>
+                    <Column><Text text="Storage Location"/></Column>
+                    <Column hAlign="End"><Text text="Ordered Quantity"/></Column>
+                    <Column hAlign="End"><Text text="Gate Recv Quantity"/></Column>
+                    <Column hAlign="End"><Text text="GR Quantity"/></Column>
+                    <Column hAlign="End"><Text text="Open Quantity"/></Column>
 
-                    <Column width="4rem" minScreenWidth="Tablet">
-                        <Text text="Item No." />
+                    <Column minScreenWidth="Desktop" demandPopin="true">
+                        <Text text="Driver Name"/>
                     </Column>
 
-                    <Column width="7rem" minScreenWidth="Tablet">
-                        <Text text="Material" />
+                    <Column minScreenWidth="Desktop" demandPopin="true">
+                        <Text text="Contact No."/>
                     </Column>
 
-                    <Column width="5rem" minScreenWidth="Desktop">
-                        <Text text="Storage Location" />
+                    <Column minScreenWidth="Desktop" demandPopin="true">
+                        <Text text="Vehicle Number"/>
                     </Column>
 
-                    <!-- 🔽 Compact Quantity Columns -->
-                    <Column width="5rem" hAlign="End" minScreenWidth="Tablet">
-                        <Text text="Ordered Qty" />
+                    <Column minScreenWidth="Desktop" demandPopin="true">
+                        <Text text="Invoice Number"/>
                     </Column>
 
-                    <Column width="7rem" hAlign="End" minScreenWidth="Desktop">
-                        <Text text="Gate Recv Qty" />
+                    <Column minScreenWidth="Desktop" demandPopin="true">
+                        <Text text="Invoice Date"/>
                     </Column>
 
-                    <Column width="5rem" hAlign="End" minScreenWidth="Desktop">
-                        <Text text="GR Qty" />
+                    <Column minScreenWidth="Desktop" demandPopin="true">
+                        <Text text="Remarks"/>
                     </Column>
-
-                    <Column width="6rem" hAlign="End" minScreenWidth="Desktop">
-                        <Text text="Open Qty" />
-                    </Column>
-
-                    <!-- Driver / Vehicle -->
-                    <Column width="10rem" minScreenWidth="Desktop" demandPopin="true">
-                        <Text text="Driver Name" />
-                    </Column>
-
-                    <Column width="9rem" minScreenWidth="Desktop" demandPopin="true">
-                        <Text text="Contact No." />
-                    </Column>
-
-                    <Column width="10rem" minScreenWidth="Desktop" demandPopin="true">
-                        <Text text="Vehicle Number" />
-                    </Column>
-
-                    <!-- 🔼 Wide Comments Column -->
-                    <Column width="18rem" minScreenWidth="Desktop" demandPopin="true">
-                        <Text text="Comments" />
-                    </Column>
-
                 </columns>
 
-                <!-- ===================== -->
-                <!-- Rows -->
-                <!-- ===================== -->
                 <items>
-                    <ColumnListItem
-                        type="Navigation"
+                    <ColumnListItem type="Navigation"
                         press=".onItemPress"
                         popinDisplay="Inline">
 
                         <cells>
-                            <Text text="{PurchaseOrderItem}" />
-                            <Text text="{Product}" />
-                            <Text text="{StorageLocation}" />
+                            <Text text="{PurchaseOrderItem}"/>
+                            <Text text="{Product}"/>
+                            <Text text="{StorageLocation}"/>
+                            <Text text="{OrderQuantity}"/>
 
-                            <Text text="{OrderQuantity}" />
+                            <StepInput value="{GateReceivedQuantity}"
+                                editable="{viewModel>/isEditable}"
+                                change=".onQuantityChange"/>
 
-                            <StepInput
+                            <Text text="{GrQuantity}"/>
+                            <Text text="{= ${OrderQuantity} - ${GrQuantity} }"/>
+
+                            <Input value="{drivername}"
+                                editable="{viewModel>/isEditable}"
+                                change=".onFieldChange"/>
+
+                            <Input value="{mobile}"
+                                editable="{viewModel>/isEditable}"
+                                change=".onFieldChange"/>
+
+                            <Input value="{vehiclenumber}"
+                                editable="{viewModel>/isEditable}"
+                                change=".onFieldChange"/>
+
+                            <Input value="{InvoiceNumber}"
+                                editable="{viewModel>/isEditable}"
+                                change=".onFieldChange"/>
+
+                            <DatePicker
                                 value="{
-                                    path: 'GateReceivedQuantity',
-                                    type: 'sap.ui.model.type.Float'
+                                    path: 'InvoiceDate',
+                                    type: 'sap.ui.model.type.Date',
+                                    formatOptions: { pattern: 'yyyy-MM-dd' }
                                 }"
-                                min="0"
-                                width="100%"
                                 editable="{viewModel>/isEditable}"
-                                change=".onQuantityChange" />
+                                change=".onFieldChange"/>
 
-                            <Text text="{GrQuantity}" />
-                            <Text text="{OpenQuantity}" />
-
-                            <Input
-                                value="{drivername}"
+                            <Input value="{comments}"
+                                placeholder="Enter remarks"
                                 editable="{viewModel>/isEditable}"
-                                change=".onFieldChange" />
-
-                            <Input
-                                value="{mobile}"
-                                editable="{viewModel>/isEditable}"
-                                change=".onFieldChange" />
-
-                            <Input
-                                value="{vehiclenumber}"
-                                editable="{viewModel>/isEditable}"
-                                change=".onFieldChange" />
-
-                            <!-- Comments (Wide) -->
-                            <Input
-                                value="{comments}"
-                                placeholder="Enter comments"
-                                editable="{viewModel>/isEditable}"
-                                width="100%"
-                                change=".onFieldChange" />
+                                change=".onFieldChange"/>
                         </cells>
 
                     </ColumnListItem>

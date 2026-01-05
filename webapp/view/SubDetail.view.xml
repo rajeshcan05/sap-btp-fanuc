@@ -16,8 +16,8 @@
                 <columns>
                     <Column><Text text="Gate Pass ID" /></Column>
                     <Column><Text text="Driver Name" /></Column>
-                    <Column><Text text="Vehicle No" /></Column>
-                    <Column><Text text="Gate Rcvd Qty" /></Column>
+                    <Column><Text text="Vehicle Number" /></Column>
+                    <Column><Text text="Gate Recv Quantity" /></Column>
                     <Column><Text text="Status" /></Column>
                     <Column><Text text="Comments" /></Column>
                 </columns>
