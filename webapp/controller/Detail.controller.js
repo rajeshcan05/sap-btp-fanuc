@@ -787,51 +787,72 @@ sap.ui.define([
             var oModel = oView.getModel();
             var oVM = oView.getModel("viewModel");
 
-            var oHeader = oView.getBindingContext().getObject();
+            var oHeaderCtx = oView.getBindingContext();
+            if (!oHeaderCtx) {
+                MessageBox.error("Header data not available.");
+                return;
+            }
+
+            // 🔹 FULL HEADER OBJECT
+            var oHeader = Object.assign({}, oHeaderCtx.getObject());
+
             var oTable = oView.byId("itemsTable");
             var aContexts = oTable.getBinding("items").getContexts();
 
             var aItems = [];
 
             aContexts.forEach(function (oCtx) {
-                if (this._oModifiedPaths.has(oCtx.getPath())) {
-                    var oItem = oCtx.getObject();
 
-                    aItems.push({
-                        PurchaseOrder: oItem.PurchaseOrder,
-                        PurchaseOrderItem: oItem.PurchaseOrderItem,
-                        GateReceivedQuantity: String(oItem.GateReceivedQuantity),
-                        drivername: oItem.drivername || "",
-                        mobile: oItem.mobile || "",
-                        vehiclenumber: oItem.vehiclenumber || "",
-                        comments: oItem.comments || "",
-                        InvoiceNumber: oItem.InvoiceNumber || "",
-                        InvoiceDate: oItem.InvoiceDate || null,
-                        received: oItem.received === true
-                    });
+                // Take FULL ITEM OBJECT
+                var oItem = Object.assign({}, oCtx.getObject());
+
+                // Only push modified rows (optional – keep your logic)
+                if (this._oModifiedPaths.has(oCtx.getPath())) {
+
+                    // 🔹 Override only editable fields
+                    oItem.GateReceivedQuantity = String(oItem.GateReceivedQuantity);
+                    oItem.drivername = oItem.drivername || "";
+                    oItem.mobile = oItem.mobile || "";
+                    oItem.vehiclenumber = oItem.vehiclenumber || "";
+                    oItem.comments = oItem.comments || "";
+                    oItem.InvoiceNumber = oItem.InvoiceNumber || "";
+                    oItem.InvoiceDate = oItem.InvoiceDate || null;
+                    oItem.received = oItem.received === true;
+
+                    aItems.push(oItem);
                 }
             }.bind(this));
 
+            // 🔹 Attach full items to full header
+            oHeader.to_PurchaseOrderItem = aItems;
+
             BusyIndicator.show(0);
 
-            oModel.create("/zi_p2p_PO_HEAD", {
-                PurchaseOrder: oHeader.PurchaseOrder,
-                to_PurchaseOrderItem: aItems
-            }, {
+            oModel.create("/zi_p2p_PO_HEAD", oHeader, {
                 success: function () {
                     BusyIndicator.hide();
                     MessageBox.success("Data pushed successfully.");
+
                     this._oModifiedPaths.clear();
                     oVM.setProperty("/isEditable", false);
+
                     oView.getElementBinding().refresh(true);
                     oTable.getBinding("items").refresh(true);
                 }.bind(this),
+
                 error: function (oError) {
                     BusyIndicator.hide();
-                    MessageBox.error("Push failed.");
+
+                    var sMsg = "Push failed.";
+                    try {
+                        sMsg = JSON.parse(oError.responseText).error.message.value;
+                    } catch (e) {}
+
+                    MessageBox.error(sMsg);
                 }
             });
         },
+
 
         /* =========================================================== */
         /* Navigation                                                  */
