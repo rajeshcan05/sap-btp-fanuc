@@ -8,6 +8,7 @@
       "version": "0.0.1"
     },
     "title": "{{appTitle}}",
+    "subTitle": "Inbound Gate Pass",
     "description": "{{appDescription}}",
     "resources": "resources.json",
     "sourceTemplate": {
@@ -28,10 +29,20 @@
     },
     "crossNavigation": {
       "inbounds": {
-        "PurchaseOrder-open": {
-          "semanticObject": "PurchaseOrder",
-          "action": "open",
-          "title": "{{appTitle}}",
+        "InboundGatePass-display": {
+          "semanticObject": "InboundGatePass",
+          "action": "display",
+
+          "title": "Inbound Gate Pass",
+          "subTitle": "Purchase Orders",
+          "icon": "sap-icon://shipping-status",
+
+          "indicatorDataSource": {
+            "dataSource": "mainService",
+            "path": "/zi_p2p_PO_HEAD/$count",
+            "refresh": 15
+          },
+
           "signature": {
             "parameters": {},
             "additionalParameters": "allowed"
