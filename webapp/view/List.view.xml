@@ -8,9 +8,6 @@
 
         <content>
 
-            <!-- ===================== -->
-            <!-- Filter Bar -->
-            <!-- ===================== -->
             <fb:FilterBar
                 id="filterBar"
                 search=".onSearch"
@@ -21,117 +18,126 @@
 
                     <fb:FilterGroupItem
                         groupName="G1"
-                        name="PO"
+                        name="PurchaseOrder"
                         label="Purchase Order"
                         visibleInFilterBar="true">
                         <fb:control>
-                            <Input
-                                id="searchPO"
-                                placeholder="Enter PO Number"/>
+                            <Input id="searchPO" placeholder="Enter PO Number"/>
                         </fb:control>
                     </fb:FilterGroupItem>
 
                     <fb:FilterGroupItem
                         groupName="G1"
-                        name="SUP"
+                        name="Supplier"
                         label="Supplier"
                         visibleInFilterBar="true">
                         <fb:control>
-                            <Input
-                                id="searchSupplier"
-                                placeholder="Enter Supplier ID"/>
+                            <Input id="searchSupplier" placeholder="Enter Supplier"/>
                         </fb:control>
                     </fb:FilterGroupItem>
 
                     <fb:FilterGroupItem
                         groupName="G1"
-                        name="PLANT"
+                        name="Plant"
                         label="Plant"
                         visibleInFilterBar="true">
                         <fb:control>
-                            <Input
-                                id="searchPlant"
-                                placeholder="Enter Plant"/>
+                            <Input id="searchPlant" placeholder="Enter Plant"/>
                         </fb:control>
                     </fb:FilterGroupItem>
 
                     <fb:FilterGroupItem
                         groupName="G1"
-                        name="COMP"
+                        name="CompanyCode"
                         label="Company Code"
                         visibleInFilterBar="true">
                         <fb:control>
-                            <Input
-                                id="searchCompCode"
-                                placeholder="Enter Company Code"/>
+                            <Input id="searchCompCode" placeholder="Enter Company Code"/>
                         </fb:control>
                     </fb:FilterGroupItem>
 
                 </fb:filterGroupItems>
             </fb:FilterBar>
 
-            <!-- ===================== -->
-            <!-- Orders Table (Pagination Enabled) -->
-            <!-- ===================== -->
             <Table
                 id="ordersTable"
-                items="{
-                    path: '/zi_p2p_PO_HEAD'
-                }"
+                items="{ path: '/zi_p2p_PO_HEAD' }"
                 mode="SingleSelectMaster"
-                itemPress=".onListItemPress"
                 growing="true"
                 growingScrollToLoad="true"
-                growingThreshold="100">
+                growingThreshold="100"
+                updateFinished=".onUpdateFinished"
+                itemPress=".onListItemPress">
 
-                <!-- Header -->
                 <headerToolbar>
                     <Toolbar>
-                        <Title
-                            text="Inbound Gate Pass"
-                            level="H2"/>
-                        <ToolbarSpacer />
-                        <Text text="Scroll to load more" />
+                        <Title text="Inbound Gate Pass" level="H2"/>
+                        <ToolbarSpacer/>
+                        <Text text="Scroll to load more"/>
                     </Toolbar>
                 </headerToolbar>
 
-                <!-- Columns -->
                 <columns>
-                    <Column><Text text="PO Number" /></Column>
-                    <Column><Text text="Type" /></Column>
-                    <Column><Text text="Company Code" /></Column>
-                    <Column><Text text="Plant" /></Column>
-                    <Column><Text text="Supplier" /></Column>
-                    <Column><Text text="Supplier Name" /></Column>
-                    <Column><Text text="PO Date" /></Column>
+                    <Column>
+                        <Text text="PO Number ({countModel>/poCount})"/>
+                    </Column>
+                    <Column>
+                        <Text text="Type"/>
+                    </Column>
+                    <Column>
+                        <Text text="Company Code ({countModel>/companyCount})"/>
+                    </Column>
+                    <Column>
+                        <Text text="Plant ({countModel>/plantCount})"/>
+                    </Column>
+                    <Column>
+                        <Text text="Supplier ({countModel>/supplierCount})"/>
+                    </Column>
+                    <Column>
+                        <Text text="Supplier Name"/>
+                    </Column>
+                    <Column>
+                        <Text text="PO Date"/>
+                    </Column>
                 </columns>
 
-                <!-- Rows -->
                 <items>
-                    <ColumnListItem
-                        type="Navigation"
-                        press=".onListItemPress">
-
+                    <ColumnListItem type="Navigation">
                         <cells>
-                            <Text text="{PurchaseOrder}" />
-                            <Text text="{PurchaseOrderType}" />
-                            <Text text="{CompanyCode}" />
-                            <Text text="{Plant}" />
-                            <Text text="{Supplier}" />
-                            <Text text="{SupplierName}" />
-
+                            <Text text="{PurchaseOrder}"/>
+                            <Text text="{PurchaseOrderType}"/>
+                            <Text text="{CompanyCode}"/>
+                            <Text text="{Plant}"/>
+                            <Text text="{Supplier}"/>
+                            <Text text="{SupplierName}"/>
                             <Text text="{
                                 path: 'PurchaseOrderDate',
                                 type: 'sap.ui.model.type.Date',
                                 formatOptions: { style: 'medium' }
-                            }" />
+                            }"/>
                         </cells>
-
                     </ColumnListItem>
                 </items>
 
             </Table>
 
         </content>
+
+        <footer>
+            <OverflowToolbar>
+                <ToolbarSpacer/>
+                <Button 
+                    icon="sap-icon://navigation-up-arrow" 
+                    type="Transparent" 
+                    press=".onScrollUp" 
+                    tooltip="Scroll to Top"/>
+                <Button 
+                    icon="sap-icon://navigation-down-arrow" 
+                    type="Transparent" 
+                    press=".onScrollDown" 
+                    tooltip="Scroll to Bottom"/>
+            </OverflowToolbar>
+        </footer>
+
     </Page>
 </mvc:View>

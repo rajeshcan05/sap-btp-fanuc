@@ -1,0 +1,43 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    
+    <ResponsivePopover
+        title="Gate Pass Entries"
+        class="sapUiPopupWithPadding"
+        placement="Auto"
+        contentWidth="50rem">
+        
+        <content>
+            <Table id="popoverTable" items="{GatePassModel>/results}">
+                <columns>
+                    <Column><Text text="Gate Pass ID" /></Column>
+                    <Column><Text text="Driver Name" /></Column>
+                    <Column><Text text="Vehicle Number" /></Column>
+                    <Column><Text text="Gate Recv Quantity" /></Column>
+                    <Column><Text text="Status" /></Column>
+                    <Column><Text text="Comments" /></Column>
+                </columns>
+                <items>
+                    <ColumnListItem>
+                        <cells>
+                            <Text text="{GatePassModel>Gatepassid}" />
+                            <Text text="{GatePassModel>Drivername}" />
+                            <Text text="{GatePassModel>Vehiclenumber}" />
+                            <Text text="{GatePassModel>GateReceivedQuantity} {GatePassModel>Unit}" />
+                            <ObjectStatus 
+                                text="{GatePassModel>Status}" 
+                                state="{= ${GatePassModel>Status} === 'IN' ? 'Success' : 'None' }" />
+                            <Text text="{GatePassModel>Comments}" />
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+        
+        <beginButton>
+            <Button text="Close" press=".onCloseGatePass" />
+        </beginButton>
+        
+    </ResponsivePopover>
+</core:FragmentDefinition>

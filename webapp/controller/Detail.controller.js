@@ -663,20 +663,240 @@
 
 
 
+// sap.ui.define([
+//     "sap/ui/core/mvc/Controller",
+//     "sap/ui/core/routing/History",
+//     "sap/m/MessageBox",
+//     "sap/m/MessageToast",
+//     "sap/ui/model/json/JSONModel",
+//     "sap/ui/core/BusyIndicator"
+// ], function (
+//     Controller,
+//     History,
+//     MessageBox,
+//     MessageToast,
+//     JSONModel,
+//     BusyIndicator
+// ) {
+//     "use strict";
+
+//     return Controller.extend("purchaseorder.poorder.controller.Detail", {
+
+//         /* =========================================================== */
+//         /* Lifecycle                                                   */
+//         /* =========================================================== */
+
+//         onInit: function () {
+//             var oRouter = this.getOwnerComponent().getRouter();
+//             oRouter.getRoute("RouteDetail")
+//                 .attachPatternMatched(this._onObjectMatched, this);
+
+//             this.getView().setModel(new JSONModel({
+//                 isEditable: false
+//             }), "viewModel");
+
+//             this._oModifiedPaths = new Set();
+//         },
+
+//         _onObjectMatched: function (oEvent) {
+//             var sPO = oEvent.getParameter("arguments").PurchaseOrder;
+
+//             this.getView().bindElement({
+//                 path: "/zi_p2p_PO_HEAD('" + sPO + "')"
+//             });
+
+//             this._oModifiedPaths.clear();
+//             this.getView().getModel("viewModel").setProperty("/isEditable", false);
+//         },
+
+//         /* =========================================================== */
+//         /* Edit / Cancel                                               */
+//         /* =========================================================== */
+
+//         onEditPress: function () {
+//             var oVM = this.getView().getModel("viewModel");
+//             if (!oVM.getProperty("/isEditable")) {
+//                 oVM.setProperty("/isEditable", true);
+//                 MessageToast.show("Edit mode enabled.");
+//             }
+//         },
+
+//         onCancelPress: function () {
+//             var oModel = this.getView().getModel();
+
+//             if (oModel.hasPendingChanges()) {
+//                 oModel.resetChanges();
+//             }
+
+//             this._oModifiedPaths.clear();
+//             this.getView().getModel("viewModel").setProperty("/isEditable", false);
+//             MessageToast.show("Changes discarded.");
+//         },
+
+//         /* =========================================================== */
+//         /* Change Tracking                                             */
+//         /* =========================================================== */
+
+//         onFieldChange: function (oEvent) {
+//             var oCtx = oEvent.getSource().getBindingContext();
+//             if (oCtx) {
+//                 this._oModifiedPaths.add(oCtx.getPath());
+//             }
+//         },
+
+//         onQuantityChange: function (oEvent) {
+//             var oInput = oEvent.getSource();
+//             var oCtx = oInput.getBindingContext();
+//             if (!oCtx) {
+//                 return;
+//             }
+
+//             var sPath = oCtx.getPath();
+//             var fGateQty = Number(oInput.getValue()) || 0;
+
+//             this.getView().getModel()
+//                 .setProperty(sPath + "/GateReceivedQuantity", String(fGateQty));
+
+//             this._oModifiedPaths.add(sPath);
+//         },
+
+//         /* =========================================================== */
+//         /* Push Flow                                                   */
+//         /* =========================================================== */
+
+//         onPushData: function () {
+//             if (this._oModifiedPaths.size === 0) {
+//                 MessageBox.information("No changes detected.");
+//                 return;
+//             }
+
+//             MessageBox.confirm("Do you want to push the changes?", {
+//                 title: "Confirm Push",
+//                 emphasizedAction: MessageBox.Action.OK,
+//                 actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+//                 onClose: function (sAction) {
+//                     if (sAction === MessageBox.Action.OK) {
+//                         this._executePush();
+//                     }
+//                 }.bind(this)
+//             });
+//         },
+
+//         _executePush: function () {
+//             var oView = this.getView();
+//             var oModel = oView.getModel();
+//             var oVM = oView.getModel("viewModel");
+
+//             var oHeaderCtx = oView.getBindingContext();
+//             if (!oHeaderCtx) {
+//                 MessageBox.error("Header data not available.");
+//                 return;
+//             }
+
+//             // 🔹 FULL HEADER OBJECT
+//             var oHeader = Object.assign({}, oHeaderCtx.getObject());
+
+//             var oTable = oView.byId("itemsTable");
+//             var aContexts = oTable.getBinding("items").getContexts();
+
+//             var aItems = [];
+
+//             aContexts.forEach(function (oCtx) {
+
+//                 // Take FULL ITEM OBJECT
+//                 var oItem = Object.assign({}, oCtx.getObject());
+
+//                 // Only push modified rows (optional – keep your logic)
+//                 if (this._oModifiedPaths.has(oCtx.getPath())) {
+
+//                     // 🔹 Override only editable fields
+//                     oItem.GateReceivedQuantity = String(oItem.GateReceivedQuantity);
+//                     oItem.drivername = oItem.drivername || "";
+//                     oItem.mobile = oItem.mobile || "";
+//                     oItem.vehiclenumber = oItem.vehiclenumber || "";
+//                     oItem.comments = oItem.comments || "";
+//                     oItem.InvoiceNumber = oItem.InvoiceNumber || "";
+//                     oItem.InvoiceDate = oItem.InvoiceDate || null;
+//                     oItem.received = oItem.received === true;
+
+//                     aItems.push(oItem);
+//                 }
+//             }.bind(this));
+
+//             // 🔹 Attach full items to full header
+//             oHeader.to_PurchaseOrderItem = aItems;
+
+//             BusyIndicator.show(0);
+
+//             oModel.create("/zi_p2p_PO_HEAD", oHeader, {
+//                 success: function () {
+//                     BusyIndicator.hide();
+//                     MessageBox.success("Data pushed successfully.");
+
+//                     this._oModifiedPaths.clear();
+//                     oVM.setProperty("/isEditable", false);
+
+//                     oView.getElementBinding().refresh(true);
+//                     oTable.getBinding("items").refresh(true);
+//                 }.bind(this),
+
+//                 error: function (oError) {
+//                     BusyIndicator.hide();
+
+//                     var sMsg = "Push failed.";
+//                     try {
+//                         sMsg = JSON.parse(oError.responseText).error.message.value;
+//                     } catch (e) {}
+
+//                     MessageBox.error(sMsg);
+//                 }
+//             });
+//         },
+
+
+//         /* =========================================================== */
+//         /* Navigation                                                  */
+//         /* =========================================================== */
+
+//         onItemPress: function (oEvent) {
+//             var oCtx = oEvent.getSource().getBindingContext();
+//             this.getOwnerComponent().getRouter().navTo("RouteSubDetail", {
+//                 PurchaseOrder: oCtx.getProperty("PurchaseOrder"),
+//                 PurchaseOrderItem: oCtx.getProperty("PurchaseOrderItem")
+//             });
+//         },
+
+//         onNavBack: function () {
+//             var sPrev = History.getInstance().getPreviousHash();
+//             if (sPrev !== undefined) {
+//                 window.history.go(-1);
+//             } else {
+//                 this.getOwnerComponent().getRouter()
+//                     .navTo("RouteList", {}, true);
+//             }
+//         }
+
+//     });
+// });
+
+
+
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/core/routing/History",
     "sap/m/MessageBox",
     "sap/m/MessageToast",
     "sap/ui/model/json/JSONModel",
-    "sap/ui/core/BusyIndicator"
+    "sap/ui/core/BusyIndicator",
+    "sap/ui/core/Fragment" // [1] Added Fragment Dependency
 ], function (
     Controller,
     History,
     MessageBox,
     MessageToast,
     JSONModel,
-    BusyIndicator
+    BusyIndicator,
+    Fragment
 ) {
     "use strict";
 
@@ -707,6 +927,69 @@ sap.ui.define([
 
             this._oModifiedPaths.clear();
             this.getView().getModel("viewModel").setProperty("/isEditable", false);
+        },
+
+        /* =========================================================== */
+        /* POPOVER / SUB-ITEM LOGIC (New)                              */
+        /* =========================================================== */
+
+        onShowGatePass: function (oEvent) {
+            var oView = this.getView();
+            var oSource = oEvent.getSource(); // The clicked row
+            var oCtx = oSource.getBindingContext();
+
+            // 1. Load Fragment if not created yet
+            if (!this._pPopover) {
+                this._pPopover = Fragment.load({
+                    id: oView.getId(),
+                    name: "purchaseorder.poorder.view.GatePassPopover", // Ensure this path matches your folder structure
+                    controller: this
+                }).then(function (oPopover) {
+                    oView.addDependent(oPopover);
+                    return oPopover;
+                });
+            }
+
+            this._pPopover.then(function (oPopover) {
+                // 2. Open the Popover next to the clicked row
+                oPopover.openBy(oSource);
+
+                // 3. Fetch Data for this specific Item
+                this._fetchGatePassData(oCtx, oPopover);
+            }.bind(this));
+        },
+
+        _fetchGatePassData: function (oCtx, oPopover) {
+            var sPath = oCtx.getPath(); // e.g. /zi_p2p_PO_Item(...)
+            var sNavPath = sPath + "/to_Gatepass_item_info"; 
+            
+            // Get the table inside the fragment to set it busy
+            var oTable = this.byId("popoverTable"); 
+            if(oTable) oTable.setBusy(true);
+
+            // Use the main OData model to read
+            var oModel = this.getOwnerComponent().getModel();
+            
+            oModel.read(sNavPath, {
+                success: function(oData) {
+                    // Create a local JSON Model for the Popover
+                    var oLocalModel = new JSONModel(oData);
+                    oPopover.setModel(oLocalModel, "GatePassModel");
+                    if(oTable) oTable.setBusy(false);
+                },
+                error: function(oError) {
+                    console.error("Error fetching gate pass data", oError);
+                    if(oTable) oTable.setBusy(false);
+                    // Optional: Clear table if error
+                    oPopover.setModel(new JSONModel({ results: [] }), "GatePassModel");
+                }
+            });
+        },
+
+        onCloseGatePass: function () {
+            this._pPopover.then(function(oPopover){
+                oPopover.close();
+            });
         },
 
         /* =========================================================== */
@@ -806,7 +1089,7 @@ sap.ui.define([
                 // Take FULL ITEM OBJECT
                 var oItem = Object.assign({}, oCtx.getObject());
 
-                // Only push modified rows (optional – keep your logic)
+                // Only push modified rows
                 if (this._oModifiedPaths.has(oCtx.getPath())) {
 
                     // 🔹 Override only editable fields
@@ -855,16 +1138,8 @@ sap.ui.define([
 
 
         /* =========================================================== */
-        /* Navigation                                                  */
+        /* Navigation (Back Only)                                      */
         /* =========================================================== */
-
-        onItemPress: function (oEvent) {
-            var oCtx = oEvent.getSource().getBindingContext();
-            this.getOwnerComponent().getRouter().navTo("RouteSubDetail", {
-                PurchaseOrder: oCtx.getProperty("PurchaseOrder"),
-                PurchaseOrderItem: oCtx.getProperty("PurchaseOrderItem")
-            });
-        },
 
         onNavBack: function () {
             var sPrev = History.getInstance().getPreviousHash();
