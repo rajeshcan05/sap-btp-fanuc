@@ -19,6 +19,9 @@ server:
           - path: /sap
             url: http://dev.sap.fanucindia.com:443
             destination: Fanuc_Dev_System
+          - path: /spa-api
+            destination: SPA_Process_Trigger
+            pathPrefix: /
     - name: fiori-tools-appreload
       afterMiddleware: compression
       configuration:

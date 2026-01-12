@@ -134,7 +134,7 @@
 </mvc:View> -->
 
 
-
+<!-- 
 <mvc:View
     controllerName="purchaseorder.poorder.controller.Detail"
     xmlns="sap.m"
@@ -267,5 +267,321 @@
 
             </Table>
         </content>
+    </Page>
+</mvc:View> -->
+
+
+
+<!-- 
+<mvc:View
+    controllerName="purchaseorder.poorder.controller.Detail"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc">
+
+    <Page
+        title="Order Details"
+        showNavButton="true"
+        navButtonPress=".onNavBack">
+
+        <content>
+
+            <ObjectHeader
+                title="{PurchaseOrder}"
+                number="{PurchaseOrderType}"
+                intro="{SupplierName}">
+                <attributes>
+                    <ObjectAttribute title="Company" text="{CompanyCode}" />
+                    <ObjectAttribute title="Plant" text="{Plant}" />
+                </attributes>
+            </ObjectHeader>
+
+            <Table
+                id="itemsTable"
+                items="{to_PurchaseOrderItem}"
+                growing="true"
+                growingThreshold="50"
+                growingScrollToLoad="true">
+
+                <headerToolbar>
+                    <Toolbar>
+                        <Title text="Items" level="H3"/>
+                        <ToolbarSpacer/>
+                        
+                        <Button text="Send for Approval" 
+                                icon="sap-icon://email" 
+                                type="Accept"
+                                press=".onSendForApproval"
+                                visible="{= !${viewModel>/isEditable} }"/>
+
+                        <Button text="Edit" press=".onEditPress"
+                            visible="{= !${viewModel>/isEditable} }"/>
+                        <Button text="Push Data" type="Emphasized"
+                            press=".onPushData"
+                            visible="{viewModel>/isEditable}"/>
+                        <Button text="Cancel" type="Reject"
+                            press=".onCancelPress"
+                            visible="{viewModel>/isEditable}"/>
+                    </Toolbar>
+                </headerToolbar>
+
+                <columns>
+                    <Column><Text text="Item"/></Column>
+                    <Column><Text text="Material"/></Column>
+                    <Column><Text text="Storage Location"/></Column>
+                    <Column hAlign="End"><Text text="Ordered Quantity"/></Column>
+                    <Column hAlign="End"><Text text="Gate Recv Quantity"/></Column>
+                    <Column hAlign="End"><Text text="GR Quantity"/></Column>
+                    <Column hAlign="End"><Text text="Open Quantity"/></Column>
+
+                    <Column minScreenWidth="Desktop" demandPopin="true">
+                        <Text text="Driver Name"/>
+                    </Column>
+
+                    <Column minScreenWidth="Desktop" demandPopin="true">
+                        <Text text="Contact No."/>
+                    </Column>
+
+                    <Column minScreenWidth="Desktop" demandPopin="true">
+                        <Text text="Vehicle Number"/>
+                    </Column>
+
+                    <Column minScreenWidth="Desktop" demandPopin="true">
+                        <Text text="Invoice Number"/>
+                    </Column>
+
+                    <Column minScreenWidth="Desktop" demandPopin="true">
+                        <Text text="Invoice Date"/>
+                    </Column>
+
+                    <Column minScreenWidth="Desktop" demandPopin="true">
+                        <Text text="Remarks"/>
+                    </Column>
+                </columns>
+
+                <items>
+                    <ColumnListItem type="Active"
+                        press=".onShowGatePass"
+                        popinDisplay="Inline">
+
+                        <cells>
+                            <Text text="{PurchaseOrderItem}"/>
+                            <Text text="{Product}"/>
+                            <Text text="{StorageLocation}"/>
+                            <Text text="{OrderQuantity}"/>
+
+                            <StepInput value="{GateReceivedQuantity}"
+                                editable="{viewModel>/isEditable}"
+                                change=".onQuantityChange"/>
+
+                            <Text text="{GrQuantity}"/>
+                            <Text text="{= ${OrderQuantity} - ${GrQuantity} }"/>
+
+                            <Input value="{drivername}"
+                                editable="{viewModel>/isEditable}"
+                                change=".onFieldChange"/>
+
+                            <Input value="{mobile}"
+                                editable="{viewModel>/isEditable}"
+                                change=".onFieldChange"/>
+
+                            <Input value="{vehiclenumber}"
+                                editable="{viewModel>/isEditable}"
+                                change=".onFieldChange"/>
+
+                            <Input value="{InvoiceNumber}"
+                                editable="{viewModel>/isEditable}"
+                                change=".onFieldChange"/>
+
+                            <DatePicker
+                                value="{
+                                    path: 'InvoiceDate',
+                                    type: 'sap.ui.model.type.Date',
+                                    formatOptions: { pattern: 'yyyy-MM-dd' }
+                                }"
+                                editable="{viewModel>/isEditable}"
+                                change=".onFieldChange"/>
+
+                            <Input value="{comments}"
+                                placeholder="Enter remarks"
+                                editable="{viewModel>/isEditable}"
+                                change=".onFieldChange"/>
+                        </cells>
+
+                    </ColumnListItem>
+                </items>
+
+            </Table>
+        </content>
+    </Page>
+</mvc:View> -->
+
+
+
+
+<mvc:View
+    controllerName="purchaseorder.poorder.controller.Detail"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc">
+
+    <Page
+        title="Order Details"
+        showNavButton="true"
+        navButtonPress=".onNavBack">
+
+        <content>
+            <ObjectHeader
+                title="{PurchaseOrder}"
+                number="{PurchaseOrderType}"
+                intro="{SupplierName}">
+                <attributes>
+                    <ObjectAttribute title="Company" text="{CompanyCode}" />
+                    <ObjectAttribute title="Plant" text="{Plant}" />
+                </attributes>
+                <statuses>
+                    <ObjectStatus 
+                        title="Order Date"
+                        text="{
+                            path: 'PurchaseOrderDate',
+                            type: 'sap.ui.model.type.Date',
+                            formatOptions: { pattern: 'dd/MM/yyyy' }
+                        }"
+                        state="None" />
+                </statuses>
+            </ObjectHeader>
+
+            <Table
+                id="itemsTable"
+                items="{to_PurchaseOrderItem}"
+                growing="true"
+                growingThreshold="50"
+                growingScrollToLoad="true"
+                updateFinished=".onTableUpdateFinished"
+                mode="{= ${viewModel>/isEditable} ? 'MultiSelect' : 'None' }">
+
+                <headerToolbar>
+                    <Toolbar>
+                        <Title text="Items" level="H3"/>
+                        
+                        <Title text="(Total Items: {viewModel>/totalItems})" titleStyle="H6" class="sapUiTinyMarginBegin"/>
+                        
+                        <ToolbarSpacer/>
+                        
+                        <Button text="Send for Approval" 
+                                icon="sap-icon://email" 
+                                type="Accept"
+                                press=".onSendForApproval"
+                                visible="{= !${viewModel>/isEditable} }"/>
+
+                        <Button text="Edit" press=".onEditPress"
+                            visible="{= !${viewModel>/isEditable} }"/>
+                        <Button text="Push Data" type="Emphasized"
+                            press=".onPushData"
+                            visible="{viewModel>/isEditable}"/>
+                        <Button text="Cancel" type="Reject"
+                            press=".onCancelPress"
+                            visible="{viewModel>/isEditable}"/>
+                    </Toolbar>
+                </headerToolbar>
+
+                <columns>
+                    <Column><Text text="Item"/></Column>
+                    <Column><Text text="Material"/></Column>
+                    <Column><Text text="Storage Location"/></Column>
+                    <Column hAlign="End"><Text text="Ordered Quantity"/></Column>
+                    <Column hAlign="End"><Text text="Gate Recv Quantity"/></Column>
+                    <Column hAlign="End"><Text text="GR Quantity"/></Column>
+                    <Column hAlign="End"><Text text="Open Quantity"/></Column>
+
+                    <Column minScreenWidth="Desktop" demandPopin="true">
+                        <Text text="Driver Name"/>
+                    </Column>
+
+                    <Column minScreenWidth="Desktop" demandPopin="true">
+                        <Text text="Contact No."/>
+                    </Column>
+
+                    <Column minScreenWidth="Desktop" demandPopin="true">
+                        <Text text="Vehicle Number"/>
+                    </Column>
+
+                    <Column minScreenWidth="Desktop" demandPopin="true">
+                        <Text text="Invoice Number"/>
+                    </Column>
+
+                    <Column minScreenWidth="Desktop" demandPopin="true">
+                        <Text text="Invoice Date"/>
+                    </Column>
+
+                    <Column minScreenWidth="Desktop" demandPopin="true">
+                        <Text text="Remarks"/>
+                    </Column>
+                </columns>
+
+                <items>
+                    <ColumnListItem type="Active"
+                        press=".onShowGatePass"
+                        popinDisplay="Inline">
+
+                        <cells>
+                            <Text text="{PurchaseOrderItem}"/>
+                            <Text text="{Product}"/>
+                            <Text text="{StorageLocation}"/>
+                            <Text text="{OrderQuantity}"/>
+
+                            <StepInput value="{GateReceivedQuantity}"
+                                editable="{viewModel>/isEditable}"
+                                change=".onQuantityChange"/>
+
+                            <Text text="{GrQuantity}"/>
+                            
+                            <ObjectStatus 
+                                text="{= ${OrderQuantity} - ${GrQuantity} }"
+                                state="{= (${OrderQuantity} - ${GrQuantity}) > 400 ? 'Success' : (${OrderQuantity} - ${GrQuantity}) >= 200 ? 'Warning' : 'Error' }"
+                                inverted="true" />
+
+                            <Input value="{drivername}"
+                                editable="{viewModel>/isEditable}"
+                                change=".onFieldChange"/>
+
+                            <Input value="{mobile}"
+                                editable="{viewModel>/isEditable}"
+                                change=".onFieldChange"/>
+
+                            <Input value="{vehiclenumber}"
+                                editable="{viewModel>/isEditable}"
+                                change=".onFieldChange"/>
+
+                            <Input value="{InvoiceNumber}"
+                                editable="{viewModel>/isEditable}"
+                                change=".onFieldChange"/>
+
+                            <DatePicker
+                                value="{
+                                    path: 'InvoiceDate',
+                                    type: 'sap.ui.model.type.Date',
+                                    formatOptions: { pattern: 'yyyy-MM-dd' }
+                                }"
+                                editable="{viewModel>/isEditable}"
+                                change=".onFieldChange"/>
+
+                            <Input value="{comments}"
+                                placeholder="Enter remarks"
+                                editable="{viewModel>/isEditable}"
+                                change=".onFieldChange"/>
+                        </cells>
+
+                    </ColumnListItem>
+                </items>
+
+            </Table>
+        </content>
+
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer />
+                <Button text="Back to List" type="Back" press=".onNavBack"/>
+            </Toolbar>
+        </footer>
+
     </Page>
 </mvc:View>

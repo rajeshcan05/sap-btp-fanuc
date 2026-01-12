@@ -1,0 +1,21 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Dialog title="Select Approver" contentWidth="300px">
+        <content>
+            <VBox class="sapUiSmallMargin">
+                <Label text="Select Manager (Outlook Email):" labelFor="emailSelect"/>
+                
+                <Select id="emailSelect" 
+                        items="{approverModel>/emails}"
+                        width="100%">
+                    <core:Item key="{approverModel>email}" text="{approverModel>name} ({approverModel>email})" />
+                </Select>
+            </VBox>
+        </content>
+        <buttons>
+            <Button text="Send" type="Emphasized" press=".onConfirmSend" />
+            <Button text="Cancel" press=".onCancelSend" />
+        </buttons>
+    </Dialog>
+</core:FragmentDefinition>

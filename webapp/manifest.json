@@ -18,7 +18,7 @@
     },
     "dataSources": {
       "mainService": {
-        "uri": "/sap/opu/odata/sap/ZAPI_GATE_PASS_PO_SB_INFO/",
+        "uri": "sap/opu/odata/sap/ZAPI_GATE_PASS_PO_SB_INFO/",
         "type": "OData",
         "settings": {
           "annotations": [],
@@ -39,7 +39,7 @@
 
           "indicatorDataSource": {
             "dataSource": "mainService",
-            "path": "/zi_p2p_PO_HEAD/$count",
+            "path": "zi_p2p_PO_HEAD/$count",
             "refresh": 15
           },
 

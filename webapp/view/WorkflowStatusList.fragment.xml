@@ -1,0 +1,62 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <Popover
+        title="Approval History"
+        class="sapUiContentPadding"
+        placement="Auto"
+        contentWidth="360px">
+
+        <subHeader>
+            <Toolbar>
+                <SegmentedButton selectionChange=".onFilterWorkflow" width="100%">
+                    <items>
+                        <SegmentedButtonItem text="All" key="ALL"/>
+                        <SegmentedButtonItem icon="sap-icon://process" key="RUNNING" tooltip="Running"/>
+                        <SegmentedButtonItem icon="sap-icon://accept" key="APPROVED" tooltip="Approved"/>
+                        <SegmentedButtonItem icon="sap-icon://decline" key="REJECTED" tooltip="Rejected"/>
+                    </items>
+                </SegmentedButton>
+            </Toolbar>
+        </subHeader>
+
+        <List
+            id="workflowList"
+            items="{workflowModel>/results}"
+            noDataText="No history found.">
+            
+            <items>
+                <ObjectListItem
+                    title="{workflowModel>displayTitle}"
+                    intro="{workflowModel>displayIntro}"
+                    type="Active"
+                    press=".onWorkflowItemPress">
+                    
+                    <firstStatus>
+                        <ObjectStatus
+                            text="{workflowModel>displayStatus}"
+                            state="{workflowModel>stateColor}" />
+                    </firstStatus>
+
+                    <attributes>
+                        <ObjectAttribute 
+                            text="{
+                                path: 'workflowModel>startedAt',
+                                type: 'sap.ui.model.type.DateTime',
+                                formatOptions: { pattern: 'MMM d, yyyy' }
+                            }"/>
+                    </attributes>
+
+                </ObjectListItem>
+            </items>
+        </List>
+        
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer/>
+                <Button icon="sap-icon://refresh" press=".onRefreshWorkflowStatus" type="Transparent"/>
+                <Button text="Close" press=".onCloseWorkflowHistory" type="Emphasized"/>
+            </Toolbar>
+        </footer>
+    </Popover>
+</core:FragmentDefinition>

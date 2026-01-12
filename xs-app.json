@@ -3,6 +3,12 @@
   "authenticationMethod": "route",
   "routes": [
     {
+      "source": "^/spa-api/(.*)$",
+      "target": "$1",
+      "destination": "SPA_Process_Trigger",
+      "csrfProtection": false
+    },
+    {
       "source": "^/sap/(.*)$",
       "target": "/sap/$1",
       "destination": "Fanuc_Dev_System",

@@ -1,0 +1,65 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:form="sap.ui.layout.form">
+    
+    <Dialog
+        title="Workflow Context Details"
+        contentWidth="550px"
+        class="sapUiContentPadding">
+
+        <content>
+            <form:SimpleForm
+                editable="false"
+                layout="ResponsiveGridLayout"
+                title="Purchase Order Information"
+                singleContainerFullSize="false">
+                <form:content>
+                    <Label text="Purchase Order" design="Bold"/>
+                    <Text text="{contextModel>/inputpayload/PurchaseOrder}"/>
+
+                    <Label text="Supplier" design="Bold"/>
+                    <Text text="{contextModel>/inputpayload/Supplier} - {contextModel>/inputpayload/SupplierName}"/>
+
+                    <Label text="Type" design="Bold"/>
+                    <Text text="{contextModel>/inputpayload/PurchaseOrderType}"/>
+                </form:content>
+            </form:SimpleForm>
+
+            <Table
+                items="{contextModel>/inputpayload/to_PurchaseOrderItem}"
+                width="100%"
+                sticky="ColumnHeaders"
+                class="sapUiSmallMarginTop">
+                
+                <headerToolbar>
+                    <Toolbar>
+                        <Title text="Line Items" level="H4"/>
+                    </Toolbar>
+                </headerToolbar>
+                
+                <columns>
+                    <Column><Text text="Item"/></Column>
+                    <Column><Text text="Product"/></Column>
+                    <Column><Text text="Plant"/></Column>
+                    <Column hAlign="End"><Text text="Qty"/></Column>
+                </columns>
+                
+                <items>
+                    <ColumnListItem>
+                        <cells>
+                            <Text text="{contextModel>PurchaseOrderItem}"/>
+                            <Text text="{contextModel>Product}"/>
+                            <Text text="{contextModel>Plant}"/>
+                            <Text text="{contextModel>OrderQuantity}"/>
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </content>
+
+        <buttons>
+            <Button text="Close" press=".onCloseWorkflowDetail" type="Emphasized"/>
+        </buttons>
+    </Dialog>
+</core:FragmentDefinition>
